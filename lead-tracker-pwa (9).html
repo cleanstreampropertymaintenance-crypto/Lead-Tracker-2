@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0B1120">
+<title>Lead Tracker</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0B1120;color:#E2E8F0;min-height:100vh;-webkit-tap-highlight-color:transparent}
+input,textarea,button,select{font-family:inherit}
+.header{padding:16px 20px;border-bottom:1px solid #1E293B;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.header h1{font-size:20px;font-weight:700;color:#F1F5F9}
+.header span{font-size:12px;color:#64748B}
+.btn{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600}
+.btn-primary{background:#3B82F6;color:#fff}
+.btn-outline{border:1px solid #334155;background:#1E293B;color:#E2E8F0}
+.legend{padding:8px 20px;display:flex;gap:16px;flex-wrap:wrap;border-bottom:1px solid #1E293B}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#94A3B8}
+.legend-dot{width:8px;height:8px;border-radius:4px}
+.content{padding:16px 20px}
+.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cal-nav button{background:none;border:none;color:#94A3B8;font-size:20px;cursor:pointer;padding:8px}
+.cal-nav h2{font-size:16px;color:#F1F5F9}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-header{text-align:center;font-size:11px;color:#475569;padding:4px}
+.cal-day{min-height:44px;border-radius:8px;padding:2px 4px;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.cal-day.selected{background:#3B82F6}
+.cal-day.today{background:#1E3A5F;border-color:#3B82F6}
+.cal-day.has-events{background:#1a2332}
+.cal-day-num{font-size:12px;text-align:right;padding:2px 4px;color:#94A3B8}
+.cal-day.selected .cal-day-num{color:#fff;font-weight:700}
+.cal-day.today .cal-day-num{color:#60A5FA;font-weight:700}
+.cal-dots{display:flex;gap:2px;flex-wrap:wrap;padding:0 2px}
+.cal-dot{width:6px;height:6px;border-radius:3px}
+.section-title{font-size:15px;color:#F1F5F9;margin:20px 0 12px}
+.section-sub{font-size:13px;color:#64748B;font-weight:400}
+.card{background:#1E293B;border-radius:12px;padding:14px;margin-bottom:8px}
+.card-empty{text-align:center;padding:24px;color:#475569;font-size:14px}
+.lead-name{font-size:15px;font-weight:600;color:#F1F5F9}
+.lead-phone{font-size:13px;color:#94A3B8}
+.lead-meta{font-size:11px;color:#64748B;margin-top:2px}
+.badge{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.action-btn{padding:7px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;background:transparent}
+.action-btn.no-answer{border:1px solid #F59E0B;color:#F59E0B;background:#F59E0B15}
+.action-btn.callback{border:1px solid #8B5CF6;color:#8B5CF6;background:#8B5CF615}
+.action-btn.accepted{border:1px solid #10B981;color:#10B981;background:#10B98115}
+.action-btn.declined{border:1px solid #EF4444;color:#EF4444;background:#EF444415}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center;z-index:999;padding:20px}
+.modal{background:#1E293B;border-radius:16px;padding:24px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
+.modal h2,.modal h3{color:#F1F5F9;margin-bottom:16px}
+.form-label{display:block;font-size:12px;color:#94A3B8;margin-bottom:4px}
+.form-input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #334155;background:#0F172A;color:#E2E8F0;font-size:14px;box-sizing:border-box}
+.form-group{margin-bottom:12px}
+.source-btn{flex:1;padding:10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600}
+.source-btn.active-fb{border:2px solid #1877F2;background:#1877F222;color:#1877F2}
+.source-btn.active-g{border:2px solid #EA4335;background:#EA433522;color:#EA4335}
+.source-btn.inactive{border:1px solid #334155;background:#0F172A;color:#94A3B8}
+.btn-row{display:flex;gap:8px}
+.btn-cancel{flex:1;padding:12px;border-radius:8px;border:1px solid #334155;background:transparent;color:#94A3B8;cursor:pointer;font-size:14px}
+.btn-submit{flex:1;padding:12px;border-radius:8px;border:none;color:#fff;cursor:pointer;font-size:14px;font-weight:600}
+.text-preview{background:#0F172A;border-radius:12px;padding:14px;margin-bottom:16px;font-size:14px;color:#E2E8F0;line-height:1.5;white-space:pre-wrap}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.info-box{background:#0F172A;border-radius:8px;padding:10px}
+.info-label{font-size:11px;color:#64748B}
+.info-value{font-size:13px;color:#E2E8F0}
+.log-item{display:flex;gap:8px;align-items:start;padding:6px 0;border-bottom:1px solid #1a2332}
+.log-dot{width:8px;height:8px;border-radius:4px;margin-top:5px;flex-shrink:0}
+.log-text{font-size:13px;color:#E2E8F0}
+.log-date{font-size:11px;color:#475569}
+.list-card{cursor:pointer}
+.sms-link{flex:2;padding:12px;border-radius:8px;background:#10B981;color:#fff;font-size:14px;font-weight:600;text-decoration:none;text-align:center;display:block}
+.fu-card{background:#0F172A;border-radius:10px;padding:12px;margin-bottom:10px}
+.fu-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.fu-num{font-size:12px;font-weight:700;color:#60A5FA}
+.fu-remove{background:none;border:none;color:#EF4444;cursor:pointer;font-size:16px;padding:2px 6px}
+.fu-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.fu-select{padding:8px 10px;border-radius:8px;border:1px solid #334155;background:#1E293B;color:#E2E8F0;font-size:13px;flex:1}
+.fu-textarea{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #334155;background:#1E293B;color:#E2E8F0;font-size:13px;resize:vertical;box-sizing:border-box;min-height:55px;line-height:1.4}
+.cap-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:#0F172A;border-radius:10px;padding:12px}
+.cap-label{font-size:13px;color:#94A3B8;font-weight:600}
+.cap-select{padding:8px 10px;border-radius:8px;border:1px solid #334155;background:#1E293B;color:#E2E8F0;font-size:13px}
+.undo-bar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#334155;border:1px solid #475569;border-radius:12px;padding:10px 20px;display:flex;align-items:center;gap:12px;z-index:900;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.undo-bar span{font-size:13px;color:#E2E8F0}
+.undo-btn{padding:6px 14px;border-radius:8px;border:none;background:#F59E0B;color:#0F172A;font-size:13px;font-weight:700;cursor:pointer}
+.undo-dismiss{background:none;border:none;color:#64748B;cursor:pointer;font-size:16px;padding:2px 6px}
+.search-bar{width:100%;padding:10px 14px;border-radius:10px;border:1px solid #334155;background:#0F172A;color:#E2E8F0;font-size:14px;margin-bottom:12px;box-sizing:border-box}
+.search-bar::placeholder{color:#475569}
+.contact-dropdown{position:absolute;left:0;right:0;top:100%;background:#0F172A;border:1px solid #334155;border-radius:0 0 8px 8px;max-height:150px;overflow-y:auto;z-index:10}
+.contact-item{padding:10px 12px;cursor:pointer;font-size:13px;color:#E2E8F0;border-bottom:1px solid #1a2332}
+.contact-item:hover{background:#1E293B}
+.contact-item span{color:#64748B;font-size:12px;margin-left:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var STORAGE_KEY="leads-tracker-v3";
+var CONFIG_KEY="leads-config-v1";
+var CONTACTS_KEY="leads-contacts-v1";
+var SRC_COLORS={Facebook:"#1877F2",Google:"#EA4335"};
+var MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+var DEFAULT_CONFIG={
+  capDay:30,
+  callbackMissedText:"Hey name! Tried calling you back at the time we set up \u2014 no worries! Just give me a call or text back whenever you get a chance \ud83d\udc4d",
+  followUps:[
+    {day:1,text:"Hey name! Just tried calling and left a voicemail \u2014 went ahead and sent your estimate over. Just hit the accept button at the top to get your spot locked in \ud83d\udc4d"},
+    {day:3,text:"Hey name! Just making sure you got that estimate okay \u2014 just hit accept at the top whenever you're ready and I'll get you on the schedule!"},
+    {day:6,text:"Hey name! We've got an opening this week \u2014 just hit accept on that estimate to grab your spot before it's gone \ud83d\udc4d"},
+    {day:10,text:"Hey name! Still got you in mind \u2014 did you get a chance to look everything over?"},
+    {day:15,text:"Hey name! Just checking in \u2014 is there anything on the estimate that didn't look right?"},
+    {day:20,text:"Hey name! No worries if life's been busy \u2014 still here whenever you're ready!"},
+    {day:25,text:"Hey name! Still thinking it over? Happy to answer anything \u2014 just text me back \ud83d\udc4d"},
+    {day:30,text:"Hey name! Last time reaching out \u2014 if you still want to get the house taken care of just let me know. Hope to hear from you! \ud83d\ude0a"}
+  ]
+};
+
+function loadLeads(){try{var d=localStorage.getItem(STORAGE_KEY);return d?JSON.parse(d):[];}catch(e){return[];}}
+function saveLeads(leads){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(leads));}catch(e){}}
+function loadConfig(){try{var d=localStorage.getItem(CONFIG_KEY);var c=d?JSON.parse(d):JSON.parse(JSON.stringify(DEFAULT_CONFIG));if(!c.callbackMissedText)c.callbackMissedText=DEFAULT_CONFIG.callbackMissedText;return c;}catch(e){return JSON.parse(JSON.stringify(DEFAULT_CONFIG));}}
+function saveConfig(config){try{localStorage.setItem(CONFIG_KEY,JSON.stringify(config));}catch(e){}}
+function loadContacts(){try{var d=localStorage.getItem(CONTACTS_KEY);return d?JSON.parse(d):[];}catch(e){return[];}}
+function saveContacts(c){try{localStorage.setItem(CONTACTS_KEY,JSON.stringify(c));}catch(e){}}
+function getFirstName(n){return n.trim().split(/\s+/)[0];}
+function applyName(template,leadName){var fn=getFirstName(leadName);return template.replace(/\bname\b/gi,fn);}
+function fmtPhone(p){var d=p.replace(/\D/g,"");if(d.length===10)return"("+d.slice(0,3)+") "+d.slice(3,6)+"-"+d.slice(6);if(d.length===11)return"("+d.slice(1,4)+") "+d.slice(4,7)+"-"+d.slice(7);return p;}
+function toDS(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function daysLeft(ed,cap){var s=new Date(ed);s.setHours(0,0,0,0);var t=new Date();t.setHours(0,0,0,0);return cap-Math.floor((t-s)/864e5);}
+function escQ(s){return s.replace(/'/g,"\\'").replace(/"/g,"&quot;");}
+
+/* Only count no_answer actions — callbacks don't consume a follow-up slot */
+function countInteractions(actions){
+  return actions.filter(function(a){return a.type==="no_answer";}).length;
+}
+
+function wasMissedCallback(actions){
+  var lastCb=null,lastNA=null;
+  for(var i=actions.length-1;i>=0;i--){
+    if(!lastCb&&actions[i].type==="callback")lastCb=actions[i];
+    if(!lastNA&&actions[i].type==="no_answer")lastNA=actions[i];
+  }
+  return lastCb&&lastNA&&new Date(lastNA.date)>new Date(lastCb.date);
+}
+
+function hasActiveCallback(actions){
+  var lastCb=null,lastNA=null;
+  for(var i=actions.length-1;i>=0;i--){
+    if(!lastCb&&actions[i].type==="callback")lastCb=actions[i];
+    if(!lastNA&&actions[i].type==="no_answer")lastNA=actions[i];
+  }
+  if(!lastCb)return null;
+  var failed=lastNA&&new Date(lastNA.date)>new Date(lastCb.date);
+  return failed?null:lastCb;
+}
+
+function getSchedule(ed,actions,config){
+  var s=new Date(ed);s.setHours(0,0,0,0);
+  var ic=countInteractions(actions);
+  var fus=config.followUps;
+  if(ic>=fus.length)return[];
+  var days=fus[ic].day;
+  var ti=ic;
+  if(days>config.capDay){days=config.capDay;ti=fus.length-1;}
+  var nd=new Date(s);nd.setDate(nd.getDate()+days);
+  return[{date:toDS(nd),daysSince:days,textIndex:ti}];
+}
+
+var state={
+  leads:loadLeads(),
+  config:loadConfig(),
+  contacts:loadContacts(),
+  view:"calendar",
+  currentMonth:{year:new Date().getFullYear(),month:new Date().getMonth()},
+  selectedDate:toDS(new Date()),
+  showForm:false,
+  showSettings:false,
+  editingLead:null,
+  editMode:false,
+  textMessage:null,
+  copied:false,
+  confirmAction:null,
+  callbackLeadId:null,
+  callbackDate:"",
+  callbackTime:"",
+  form:{name:"",phone:"",source:"Facebook",estimateDate:toDS(new Date()),notes:""},
+  undoSnapshot:null,
+  undoLabel:"",
+  listSearch:"",
+  contactSearchVisible:false
+};
+
+function setState(updates){Object.assign(state,updates);render();}
+
+function getActiveLeads(){var cap=state.config.capDay;return state.leads.filter(function(l){return l.status==="active"&&daysLeft(l.estimateDate,cap)>=0;});}
+
+function getCalendarFollowUps(){
+  var map={},active=getActiveLeads(),config=state.config;
+  active.forEach(function(l){
+    var cb=hasActiveCallback(l.actions);
+    if(cb){
+      var d=cb.callbackDate;
+      if(!map[d])map[d]=[];
+      map[d].push(Object.assign({},l,{followUpType:"callback",callbackTime:cb.callbackTime}));
+      return;
+    }
+    var sched=getSchedule(l.estimateDate,l.actions,config);
+    sched.forEach(function(s){
+      if(!map[s.date])map[s.date]=[];
+      map[s.date].push(Object.assign({},l,{followUpType:"call",daysSince:s.daysSince,textIndex:s.textIndex}));
+    });
+  });
+  return map;
+}
+
+function storeUndo(label){
+  state.undoSnapshot=JSON.parse(JSON.stringify(state.leads));
+  state.undoLabel=label;
+}
+
+function doUndo(){
+  if(!state.undoSnapshot)return;
+  saveLeads(state.undoSnapshot);
+  setState({leads:state.undoSnapshot,undoSnapshot:null,undoLabel:"",textMessage:null});
+}
+
+function addLead(){
+  var f=state.form;
+  if(!f.name.trim()||!f.phone.trim())return;
+  var nl={id:Date.now().toString(),name:f.name.trim(),phone:f.phone.trim(),source:f.source,estimateDate:f.estimateDate,notes:f.notes.trim(),status:"active",actions:[],createdAt:new Date().toISOString()};
+  var leads=state.leads.concat([nl]);
+  saveLeads(leads);
+  setState({leads:leads,showForm:false,contactSearchVisible:false,form:{name:"",phone:"",source:"Facebook",estimateDate:toDS(new Date()),notes:""}});
+}
+
+function handleNoAnswer(id){
+  var lead=null;
+  for(var i=0;i<state.leads.length;i++){if(state.leads[i].id===id){lead=state.leads[i];break;}}
+  if(!lead)return;
+  storeUndo("No Answer \u2014 "+lead.name);
+  var config=state.config;
+  var fus=config.followUps;
+  var cb=hasActiveCallback(lead.actions);
+  var ic=countInteractions(lead.actions);
+  var msg=null;
+
+  if(cb){
+    /* Missed callback: use callback-specific text */
+    msg=applyName(config.callbackMissedText,lead.name);
+  } else {
+    var ti=ic;
+    if(ti>=fus.length)ti=fus.length-1;
+    msg=ti<fus.length?applyName(fus[ti].text,lead.name):null;
+  }
+
+  var stepNum=cb?(ic+1):(ic+1);
+  var leads=state.leads.map(function(l){
+    if(l.id!==id)return l;
+    var na=l.actions.concat([{type:"no_answer",date:new Date().toISOString()}]);
+    var ns=l.status;
+    var newIc=countInteractions(na);
+    if(newIc>=fus.length)ns="expired";
+    else if(fus[newIc].day>config.capDay)ns="expired";
+    return Object.assign({},l,{actions:na,status:ns});
+  });
+  saveLeads(leads);
+  setState({leads:leads,confirmAction:null,textMessage:msg?{leadName:lead.name,phone:lead.phone,message:msg,stepNumber:cb?"CB":stepNum,totalSteps:fus.length,isCallback:!!cb}:null,copied:false});
+}
+
+function recordAction(id,type){
+  var lead=null;
+  for(var i=0;i<state.leads.length;i++){if(state.leads[i].id===id){lead=state.leads[i];break;}}
+  if(lead)storeUndo(type.charAt(0).toUpperCase()+type.slice(1)+" \u2014 "+lead.name);
+  var leads=state.leads.map(function(l){
+    if(l.id!==id)return l;
+    var na=l.actions.concat([{type:type,date:new Date().toISOString()}]);
+    var ns=l.status;
+    if(type==="accepted")ns="accepted";
+    if(type==="declined")ns="declined";
+    return Object.assign({},l,{actions:na,status:ns});
+  });
+  saveLeads(leads);
+  setState({leads:leads,confirmAction:null});
+}
+
+function setCallback(id){
+  if(!state.callbackDate)return;
+  var lead=null;
+  for(var i=0;i<state.leads.length;i++){if(state.leads[i].id===id){lead=state.leads[i];break;}}
+  if(lead)storeUndo("Callback \u2014 "+lead.name);
+  var leads=state.leads.map(function(l){
+    if(l.id!==id)return l;
+    return Object.assign({},l,{actions:l.actions.concat([{type:"callback",date:new Date().toISOString(),callbackDate:state.callbackDate,callbackTime:state.callbackTime}])});
+  });
+  saveLeads(leads);
+  setState({leads:leads,callbackLeadId:null,callbackDate:"",callbackTime:""});
+}
+
+function deleteLead(id){
+  var leads=state.leads.filter(function(l){return l.id!==id;});
+  saveLeads(leads);
+  setState({leads:leads,editingLead:null,editMode:false});
+}
+
+function saveLeadEdit(){
+  var nEl=document.getElementById("edit-name");
+  var pEl=document.getElementById("edit-phone");
+  var ntEl=document.getElementById("edit-notes");
+  if(!nEl||!pEl)return;
+  var newName=nEl.value.trim(),newPhone=pEl.value.trim(),newNotes=ntEl?ntEl.value.trim():"";
+  if(!newName||!newPhone)return;
+  var id=state.editingLead.id;
+  var leads=state.leads.map(function(l){
+    if(l.id!==id)return l;
+    return Object.assign({},l,{name:newName,phone:newPhone,notes:newNotes});
+  });
+  saveLeads(leads);
+  var updated=leads.find(function(l){return l.id===id;});
+  setState({leads:leads,editingLead:updated,editMode:false});
+}
+
+function copyText(text){
+  navigator.clipboard.writeText(text).then(function(){
+    setState({copied:true});setTimeout(function(){setState({copied:false});},2000);
+  }).catch(function(){
+    var ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);
+    setState({copied:true});setTimeout(function(){setState({copied:false});},2000);
+  });
+}
+
+function saveSettingsFromDOM(){
+  var capEl=document.getElementById("cap-day");
+  var cbTextEl=document.getElementById("cb-missed-text");
+  var capDay=parseInt(capEl.value);
+  var cbText=cbTextEl?cbTextEl.value:state.config.callbackMissedText;
+  var fus=[];
+  var count=document.querySelectorAll(".fu-card").length;
+  for(var i=0;i<count;i++){
+    var dayEl=document.getElementById("fu-day-"+i);
+    var textEl=document.getElementById("fu-text-"+i);
+    if(dayEl&&textEl){fus.push({day:parseInt(dayEl.value),text:textEl.value});}
+  }
+  var config={capDay:capDay,callbackMissedText:cbText,followUps:fus};
+  saveConfig(config);
+  setState({config:config,showSettings:false});
+}
+
+function addFollowUp(){
+  var config=JSON.parse(JSON.stringify(state.config));
+  var lastDay=config.followUps.length>0?config.followUps[config.followUps.length-1].day+1:1;
+  if(lastDay>config.capDay)lastDay=config.capDay;
+  config.followUps.push({day:lastDay,text:"Hey name!"});
+  saveConfig(config);
+  setState({config:config});
+}
+
+function removeFollowUp(idx){
+  var config=JSON.parse(JSON.stringify(state.config));
+  config.followUps.splice(idx,1);
+  saveConfig(config);
+  setState({config:config});
+}
+
+function resetConfig(){
+  var config=JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+  saveConfig(config);
+  setState({config:config});
+}
+
+function handleCSVImport(){
+  var input=document.createElement("input");
+  input.type="file";input.accept=".csv";
+  input.onchange=function(e){
+    var file=e.target.files[0];if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var text=ev.target.result;
+      var lines=text.split(/\r?\n/).filter(function(l){return l.trim();});
+      if(lines.length<1)return;
+      var newContacts=[];
+      var startIdx=0;
+      var firstLine=lines[0].toLowerCase();
+      if(firstLine.indexOf("name")!==-1||firstLine.indexOf("phone")!==-1)startIdx=1;
+      for(var i=startIdx;i<lines.length;i++){
+        var parts=lines[i].match(/(".*?"|[^,]+)/g);
+        if(!parts||parts.length<2)continue;
+        var name=parts[0].replace(/^"|"$/g,"").trim();
+        var phone=parts[1].replace(/^"|"$/g,"").trim();
+        if(name&&phone)newContacts.push({name:name,phone:phone});
+      }
+      var existing=state.contacts;
+      var merged=existing.slice();
+      newContacts.forEach(function(nc){
+        var dup=merged.some(function(c){return c.name.toLowerCase()===nc.name.toLowerCase()&&c.phone.replace(/\D/g,"")===nc.phone.replace(/\D/g,"");});
+        if(!dup)merged.push(nc);
+      });
+      saveContacts(merged);
+      setState({contacts:merged});
+      alert("Imported "+newContacts.length+" contact"+(newContacts.length!==1?"s":"")+"!");
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function selectContact(name,phone){
+  state.form.name=name;
+  state.form.phone=phone;
+  setState({form:state.form,contactSearchVisible:false});
+  setTimeout(function(){
+    var nEl=document.getElementById("f-name");
+    var pEl=document.getElementById("f-phone");
+    if(nEl)nEl.value=name;
+    if(pEl)pEl.value=phone;
+  },10);
+}
+
+function render(){
+  var app=document.getElementById("app");
+  var config=state.config;
+  var active=getActiveLeads();
+  var calFU=getCalendarFollowUps();
+  var selLeads=calFU[state.selectedDate]||[];
+  var year=state.currentMonth.year,month=state.currentMonth.month;
+  var firstDay=new Date(year,month,1).getDay();
+  var dim=new Date(year,month+1,0).getDate();
+  var todayStr=toDS(new Date());
+
+  var calDays="";
+  for(var i=0;i<firstDay;i++)calDays+='<div style="min-height:44px"></div>';
+  for(var d=1;d<=dim;d++){
+    var ds=year+"-"+String(month+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    var fups=calFU[ds]||[];
+    var isToday=ds===todayStr,isSel=ds===state.selectedDate;
+    var cls="cal-day";
+    if(isSel)cls+=" selected";else if(isToday)cls+=" today";else if(fups.length)cls+=" has-events";
+    var dots="";
+    if(fups.length){
+      var dotHTML="";
+      for(var j=0;j<Math.min(fups.length,3);j++){
+        var col=fups[j].followUpType==="callback"?"#8B5CF6":(SRC_COLORS[fups[j].source]||"#3B82F6");
+        dotHTML+='<div class="cal-dot" style="background:'+col+'"></div>';
+      }
+      if(fups.length>3)dotHTML+='<span style="font-size:9px;color:#64748B">+'+(fups.length-3)+'</span>';
+      dots='<div class="cal-dots">'+dotHTML+'</div>';
+    }
+    calDays+='<div class="'+cls+'" onclick="setState({selectedDate:\''+ds+'\'})">'+'<div class="cal-day-num">'+d+'</div>'+dots+'</div>';
+  }
+
+  var selectedHTML="";
+  if(selLeads.length===0){
+    selectedHTML='<div class="card card-empty">No follow-ups scheduled</div>';
+  } else {
+    var cards="";
+    for(var i=0;i<selLeads.length;i++){
+      var l=selLeads[i];
+      var ic=countInteractions(l.actions);
+      var meta="";
+      if(l.followUpType==="callback"&&l.callbackTime)meta='<div style="font-size:12px;color:#8B5CF6;margin-top:2px">\ud83d\udcde Callback at '+l.callbackTime+'</div>';
+      else if(l.followUpType==="callback")meta='<div style="font-size:12px;color:#8B5CF6;margin-top:2px">\ud83d\udcde Scheduled Callback</div>';
+      else if(l.followUpType==="call")meta='<div class="lead-meta">Follow-up #'+(ic+1)+' of '+config.followUps.length+' \u00b7 Day '+l.daysSince+'</div>';
+      cards+='<div class="card">'
+        +'<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">'
+        +'<div onclick="setState({editingLead:state.leads.find(function(x){return x.id===\''+l.id+'\'}),editMode:false})" style="cursor:pointer">'
+        +'<div class="lead-name">'+l.name+'</div>'
+        +'<div class="lead-phone">'+fmtPhone(l.phone)+'</div>'+meta+'</div>'
+        +'<span class="badge" style="background:'+SRC_COLORS[l.source]+'22;color:'+SRC_COLORS[l.source]+'">'+l.source+'</span></div>'
+        +'<div class="actions">'
+        +'<a href="tel:'+l.phone.replace(/\D/g,"")+'" style="padding:7px 12px;border-radius:8px;border:1px solid #3B82F6;background:#3B82F615;color:#3B82F6;font-size:12px;font-weight:600;text-decoration:none;text-align:center">\ud83d\udcde Call</a>'
+        +'<button class="action-btn no-answer" onclick="handleNoAnswer(\''+l.id+'\')">No Answer</button>'
+        +'<button class="action-btn callback" onclick="setState({callbackLeadId:\''+l.id+'\'})">Callback</button>'
+        +'<button class="action-btn accepted" onclick="setState({confirmAction:{msg:\''+escQ(l.name)+' accepted the estimate?\',label:\'Accepted\',color:\'#10B981\',id:\''+l.id+'\',type:\'accepted\'}})">Accepted</button>'
+        +'<button class="action-btn declined" onclick="setState({confirmAction:{msg:\''+escQ(l.name)+' declined the estimate?\',label:\'Declined\',color:\'#EF4444\',id:\''+l.id+'\',type:\'declined\'}})">Declined</button>'
+        +'</div></div>';
+    }
+    selectedHTML=cards;
+  }
+
+  var selDateLabel=new Date(state.selectedDate+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+
+  /* LIST VIEW */
+  var listHTML="";
+  if(state.view==="list"){
+    var searchBar='<input class="search-bar" placeholder="Search leads..." value="'+state.listSearch+'" oninput="setState({listSearch:this.value})">';
+    if(state.leads.length===0){
+      listHTML=searchBar+'<div class="card card-empty">No leads yet. Add your first lead!</div>';
+    } else {
+      var items="";
+      var reversed=state.leads.slice().reverse();
+      var q=state.listSearch.toLowerCase();
+      var filtered=q?reversed.filter(function(l){return l.name.toLowerCase().indexOf(q)!==-1||l.phone.indexOf(q)!==-1;}):reversed;
+      for(var i=0;i<filtered.length;i++){
+        var l=filtered[i];
+        var sc=l.status==="active"?(SRC_COLORS[l.source]||"#3B82F6"):l.status==="accepted"?"#10B981":l.status==="declined"?"#EF4444":"#64748B";
+        var sl=l.status==="active"?l.source:l.status.charAt(0).toUpperCase()+l.status.slice(1);
+        var dl=l.status==="active"?'<div style="font-size:11px;color:#64748B;margin-top:4px">'+daysLeft(l.estimateDate,config.capDay)+'d left</div>':"";
+        items+='<div class="card list-card" onclick="setState({editingLead:state.leads.find(function(x){return x.id===\''+l.id+'\'}),editMode:false})">'
+          +'<div style="display:flex;justify-content:space-between;align-items:center">'
+          +'<div><div class="lead-name">'+l.name+'</div><div class="lead-phone">'+fmtPhone(l.phone)+'</div></div>'
+          +'<div style="text-align:right"><span class="badge" style="background:'+sc+'22;color:'+sc+'">'+sl+'</span>'+dl+'</div>'
+          +'</div></div>';
+      }
+      listHTML=searchBar+(filtered.length?items:'<div class="card card-empty">No matching leads</div>');
+    }
+  }
+
+  var modals="";
+
+  /* ADD LEAD */
+  if(state.showForm){
+    var contactResults="";
+    if(state.contactSearchVisible&&state.form.name.length>0){
+      var sq=state.form.name.toLowerCase();
+      var matches=state.contacts.filter(function(c){return c.name.toLowerCase().indexOf(sq)!==-1;}).slice(0,5);
+      if(matches.length){
+        var citems="";
+        for(var ci=0;ci<matches.length;ci++){
+          citems+='<div class="contact-item" onclick="selectContact(\''+escQ(matches[ci].name)+'\',\''+escQ(matches[ci].phone)+'\')">'+matches[ci].name+'<span>'+fmtPhone(matches[ci].phone)+'</span></div>';
+        }
+        contactResults='<div class="contact-dropdown">'+citems+'</div>';
+      }
+    }
+    modals+='<div class="modal-overlay"><div class="modal">'
+      +'<h2 style="font-size:18px">Add New Lead</h2>'
+      +'<div class="form-group" style="position:relative"><label class="form-label">Name *</label><input class="form-input" id="f-name" placeholder="John Smith" value="'+escQ(state.form.name)+'" oninput="state.form.name=this.value;state.contactSearchVisible=true;render();">'+contactResults+'</div>'
+      +'<div class="form-group"><label class="form-label">Phone *</label><input class="form-input" id="f-phone" type="tel" placeholder="(555) 123-4567" value="'+escQ(state.form.phone)+'"></div>'
+      +'<div class="form-group"><label class="form-label">Estimate Date</label><input class="form-input" id="f-date" type="date" value="'+state.form.estimateDate+'"></div>'
+      +'<div class="form-group"><label class="form-label">Lead Source</label>'
+      +'<div style="display:flex;gap:8px">'
+      +'<button class="source-btn '+(state.form.source==="Facebook"?"active-fb":"inactive")+'" onclick="setState({form:Object.assign({},state.form,{source:\'Facebook\'})})">Facebook</button>'
+      +'<button class="source-btn '+(state.form.source==="Google"?"active-g":"inactive")+'" onclick="setState({form:Object.assign({},state.form,{source:\'Google\'})})">Google</button>'
+      +'</div></div>'
+      +'<div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="f-notes" rows="2" placeholder="Any notes...">'+state.form.notes+'</textarea></div>'
+      +'<div class="btn-row">'
+      +'<button class="btn-cancel" onclick="setState({showForm:false,contactSearchVisible:false})">Cancel</button>'
+      +'<button class="btn-submit" style="background:#3B82F6" onclick="state.form.name=document.getElementById(\'f-name\').value;state.form.phone=document.getElementById(\'f-phone\').value;state.form.estimateDate=document.getElementById(\'f-date\').value;state.form.notes=document.getElementById(\'f-notes\').value;addLead()">Add Lead</button>'
+      +'</div></div></div>';
+  }
+
+  /* SETTINGS */
+  if(state.showSettings){
+    var capOptions="";
+    for(var i=7;i<=90;i++){capOptions+='<option value="'+i+'"'+(config.capDay===i?" selected":"")+'>'+i+' days</option>';}
+    var fusHTML="";
+    for(var i=0;i<config.followUps.length;i++){
+      var fu=config.followUps[i];
+      var dayOpts="";
+      for(var d=1;d<=config.capDay;d++){dayOpts+='<option value="'+d+'"'+(fu.day===d?" selected":"")+'>Day '+d+'</option>';}
+      fusHTML+='<div class="fu-card">'
+        +'<div class="fu-header">'
+        +'<span class="fu-num">Follow-up #'+(i+1)+' / Text #'+(i+1)+'</span>'
+        +(config.followUps.length>1?'<button class="fu-remove" onclick="removeFollowUp('+i+')">\u00d7</button>':'')
+        +'</div>'
+        +'<div class="fu-row">'
+        +'<span style="font-size:12px;color:#94A3B8;white-space:nowrap">Schedule on</span>'
+        +'<select class="fu-select" id="fu-day-'+i+'">'+dayOpts+'</select>'
+        +'</div>'
+        +'<textarea class="fu-textarea" id="fu-text-'+i+'" rows="2">'+fu.text+'</textarea>'
+        +'<div style="font-size:10px;color:#475569;margin-top:4px">Type "name" where you want their first name</div>'
+        +'</div>';
+    }
+    modals+='<div class="modal-overlay"><div class="modal" style="max-width:440px">'
+      +'<h2 style="font-size:18px;margin-bottom:8px">Settings</h2>'
+      +'<div class="cap-row">'
+      +'<span class="cap-label">Stop following up after</span>'
+      +'<select class="cap-select" id="cap-day">'+capOptions+'</select>'
+      +'</div>'
+      /* Callback missed text */
+      +'<div style="margin-bottom:16px">'
+      +'<div style="font-size:14px;font-weight:600;color:#F1F5F9;margin-bottom:8px">\ud83d\udcde Missed Callback Text</div>'
+      +'<div class="fu-card">'
+      +'<textarea class="fu-textarea" id="cb-missed-text" rows="3">'+config.callbackMissedText+'</textarea>'
+      +'<div style="font-size:10px;color:#475569;margin-top:4px">Sent when a scheduled callback is missed. Use "name" for their first name.</div>'
+      +'</div></div>'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<span style="font-size:14px;font-weight:600;color:#F1F5F9">Follow-ups ('+config.followUps.length+')</span>'
+      +'<button class="btn btn-primary" style="font-size:12px;padding:6px 12px" onclick="addFollowUp()">+ Add</button>'
+      +'</div>'
+      +fusHTML
+      +'<div style="display:flex;gap:8px;margin-top:8px">'
+      +'<button style="padding:10px 14px;border-radius:8px;border:1px solid #EF4444;background:transparent;color:#EF4444;cursor:pointer;font-size:13px" onclick="resetConfig()">Reset</button>'
+      +'<div style="flex:1"></div>'
+      +'<button class="btn-cancel" style="flex:0" onclick="setState({showSettings:false})">Cancel</button>'
+      +'<button class="btn-submit" style="background:#3B82F6;flex:0;padding:10px 20px" onclick="saveSettingsFromDOM()">Save</button>'
+      +'</div></div></div>';
+  }
+
+  /* TEXT MESSAGE */
+  if(state.textMessage){
+    var tm=state.textMessage;
+    var smsHref="sms:"+tm.phone.replace(/\D/g,"")+"?body="+encodeURIComponent(tm.message);
+    var stepLabel=tm.isCallback?'\ud83d\udcde Missed Callback':'#'+tm.stepNumber+' of '+tm.totalSteps;
+    modals+='<div class="modal-overlay"><div class="modal" style="max-width:400px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<h3 style="font-size:16px;margin:0">\ud83d\udcf1 Text to '+tm.leadName+'</h3>'
+      +'<span class="badge" style="background:'+(tm.isCallback?'#8B5CF622':'#3B82F622')+';color:'+(tm.isCallback?'#A78BFA':'#60A5FA')+'">'+stepLabel+'</span></div>'
+      +'<p style="font-size:12px;color:#64748B;margin-bottom:8px">'+fmtPhone(tm.phone)+'</p>'
+      +'<div class="text-preview">'+tm.message+'</div>'
+      +'<div class="btn-row">'
+      +'<button class="btn-submit" style="background:'+(state.copied?"#10B981":"#334155")+'" onclick="copyText(state.textMessage.message)">'+(state.copied?"\u2713 Copied!":"\ud83d\udccb Copy Text")+'</button>'
+      +'<a href="'+smsHref+'" class="sms-link">\ud83d\udcac Send Text</a>'
+      +'</div>'
+      +'<button style="width:100%;margin-top:8px;padding:10px;border-radius:8px;border:none;background:transparent;color:#64748B;cursor:pointer;font-size:13px" onclick="setState({textMessage:null})">Close</button>'
+      +'</div></div>';
+  }
+
+  /* CALLBACK */
+  if(state.callbackLeadId){
+    modals+='<div class="modal-overlay"><div class="modal" style="max-width:340px">'
+      +'<h3 style="font-size:16px">Schedule Callback</h3>'
+      +'<div class="form-group"><label class="form-label">Date *</label><input class="form-input" id="cb-date" type="date" value="'+state.callbackDate+'"></div>'
+      +'<div class="form-group"><label class="form-label">Time (optional)</label><input class="form-input" id="cb-time" type="time" value="'+state.callbackTime+'"></div>'
+      +'<div class="btn-row">'
+      +'<button class="btn-cancel" onclick="setState({callbackLeadId:null,callbackDate:\'\',callbackTime:\'\'})">Cancel</button>'
+      +'<button class="btn-submit" style="background:#8B5CF6" onclick="state.callbackDate=document.getElementById(\'cb-date\').value;state.callbackTime=document.getElementById(\'cb-time\').value;setCallback(state.callbackLeadId)">Set Callback</button>'
+      +'</div></div></div>';
+  }
+
+  /* CONFIRM */
+  if(state.confirmAction){
+    var ca=state.confirmAction;
+    modals+='<div class="modal-overlay"><div class="modal" style="max-width:340px;text-align:center">'
+      +'<p style="font-size:15px;margin-bottom:16px">'+ca.msg+'</p>'
+      +'<div class="btn-row">'
+      +'<button class="btn-cancel" onclick="setState({confirmAction:null})">Cancel</button>'
+      +'<button class="btn-submit" style="background:'+ca.color+'" onclick="recordAction(\''+ca.id+'\',\''+ca.type+'\')">'+ca.label+'</button>'
+      +'</div></div></div>';
+  }
+
+  /* LEAD DETAIL (with edit mode) */
+  if(state.editingLead){
+    var el=state.editingLead;
+    var dl=daysLeft(el.estimateDate,config.capDay);
+    var logHTML="";
+    if(el.actions.length===0){logHTML='<p style="font-size:13px;color:#475569">No actions yet</p>';}
+    else{for(var i=0;i<el.actions.length;i++){
+      var a=el.actions[i];
+      var col=a.type==="no_answer"?"#F59E0B":a.type==="callback"?"#8B5CF6":a.type==="accepted"?"#10B981":"#EF4444";
+      var txt=a.type==="no_answer"?"No Answer":a.type==="callback"?"Callback: "+new Date(a.callbackDate+"T12:00:00").toLocaleDateString()+(a.callbackTime?" at "+a.callbackTime:""):a.type==="accepted"?"Estimate Accepted \u2713":"Estimate Declined \u2717";
+      logHTML+='<div class="log-item"><div class="log-dot" style="background:'+col+'"></div><div><div class="log-text">'+txt+'</div><div class="log-date">'+new Date(a.date).toLocaleString()+'</div></div></div>';
+    }}
+
+    var detailTop="";
+    if(state.editMode){
+      detailTop='<div style="margin-bottom:16px">'
+        +'<div class="form-group"><label class="form-label">Name</label><input class="form-input" id="edit-name" value="'+escQ(el.name)+'"></div>'
+        +'<div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="edit-phone" type="tel" value="'+escQ(el.phone)+'"></div>'
+        +'<div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="edit-notes" rows="3">'+el.notes+'</textarea></div>'
+        +'<div class="btn-row"><button class="btn-cancel" style="flex:0;padding:8px 16px" onclick="setState({editMode:false})">Cancel</button>'
+        +'<button class="btn-submit" style="background:#10B981;flex:0;padding:8px 20px" onclick="saveLeadEdit()">\u2713 Save</button></div>'
+        +'</div>';
+    } else {
+      detailTop='<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px">'
+        +'<div><h3 style="font-size:18px;margin:0">'+el.name+'</h3><p style="font-size:13px;color:#94A3B8;margin-top:4px">'+fmtPhone(el.phone)+'</p></div>'
+        +'<div style="display:flex;gap:6px;align-items:center">'
+        +'<button style="padding:5px 10px;border-radius:6px;border:1px solid #3B82F6;background:transparent;color:#3B82F6;cursor:pointer;font-size:12px;font-weight:600" onclick="setState({editMode:true})">Edit</button>'
+        +'<span class="badge" style="background:'+SRC_COLORS[el.source]+'22;color:'+SRC_COLORS[el.source]+'">'+el.source+'</span></div></div>';
+    }
+
+    modals+='<div class="modal-overlay" style="z-index:998"><div class="modal" style="max-width:420px">'
+      +detailTop
+      +(!state.editMode?'<div class="info-grid">'
+      +'<div class="info-box"><div class="info-label">Estimate Date</div><div class="info-value">'+new Date(el.estimateDate+"T12:00:00").toLocaleDateString()+'</div></div>'
+      +'<div class="info-box"><div class="info-label">Days Left</div><div class="info-value" style="color:'+(dl<=5?"#EF4444":"#E2E8F0")+'">'+Math.max(0,dl)+'</div></div></div>'
+      +(el.notes?'<div style="background:#0F172A;border-radius:8px;padding:10px;margin-bottom:16px;font-size:13px;color:#94A3B8">'+el.notes+'</div>':""):"")
+      +'<h4 style="font-size:13px;color:#64748B;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Activity Log</h4>'
+      +'<div style="margin-bottom:16px">'+logHTML+'</div>'
+      +'<div style="display:flex;gap:8px">'
+      +'<button style="padding:10px 16px;border-radius:8px;border:1px solid #EF4444;background:transparent;color:#EF4444;cursor:pointer;font-size:13px" onclick="deleteLead(\''+el.id+'\')">Delete</button>'
+      +'<div style="flex:1"></div>'
+      +'<button style="padding:10px 20px;border-radius:8px;border:none;background:#334155;color:#E2E8F0;cursor:pointer;font-size:13px" onclick="setState({editingLead:null,editMode:false})">Close</button>'
+      +'</div></div></div>';
+  }
+
+  /* UNDO BAR */
+  var undoHTML="";
+  if(state.undoSnapshot){
+    undoHTML='<div class="undo-bar">'
+      +'<span>'+state.undoLabel+'</span>'
+      +'<button class="undo-btn" onclick="doUndo()">Undo</button>'
+      +'<button class="undo-dismiss" onclick="setState({undoSnapshot:null,undoLabel:\'\'})">\u2715</button>'
+      +'</div>';
+  }
+
+  app.innerHTML=
+    '<div class="header">'
+    +'<div><h1>Lead Tracker</h1><span>'+active.length+' active lead'+(active.length!==1?"s":"")+'</span></div>'
+    +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'
+    +'<button class="btn btn-outline" onclick="handleCSVImport()" style="padding:8px 10px;font-size:12px">\ud83d\udcc2 Import</button>'
+    +'<button class="btn btn-outline" onclick="setState({showSettings:true})" style="padding:8px 10px">Settings</button>'
+    +'<button class="btn btn-outline" onclick="setState({view:state.view===\'calendar\'?\'list\':\'calendar\',listSearch:\'\'})">'+(state.view==="calendar"?"\ud83d\udccb List":"\ud83d\udcc5 Calendar")+'</button>'
+    +'<button class="btn btn-primary" onclick="setState({showForm:true,contactSearchVisible:false})">+ Add</button>'
+    +'</div></div>'
+    +'<div class="legend">'
+    +'<div class="legend-item"><div class="legend-dot" style="background:#1877F2"></div>Facebook</div>'
+    +'<div class="legend-item"><div class="legend-dot" style="background:#EA4335"></div>Google</div>'
+    +'<div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div>Callback</div>'
+    +'</div>'
+    +(state.view==="calendar"?
+    '<div class="content">'
+    +'<div class="cal-nav">'
+    +'<button onclick="setState({currentMonth:state.currentMonth.month===0?{year:state.currentMonth.year-1,month:11}:{year:state.currentMonth.year,month:state.currentMonth.month-1}})">\u2039</button>'
+    +'<h2>'+MONTHS[month]+' '+year+'</h2>'
+    +'<button onclick="setState({currentMonth:state.currentMonth.month===11?{year:state.currentMonth.year+1,month:0}:{year:state.currentMonth.year,month:state.currentMonth.month+1}})">\u203a</button>'
+    +'</div>'
+    +'<div class="cal-grid">'
+    +'<div class="cal-header">Sun</div><div class="cal-header">Mon</div><div class="cal-header">Tue</div><div class="cal-header">Wed</div><div class="cal-header">Thu</div><div class="cal-header">Fri</div><div class="cal-header">Sat</div>'
+    +calDays+'</div>'
+    +'<h3 class="section-title">'+selDateLabel+(selLeads.length?' <span class="section-sub">\u2014 '+selLeads.length+' follow-up'+(selLeads.length!==1?"s":"")+'</span>':"")+'</h3>'
+    +selectedHTML+'</div>'
+    :'<div class="content"><h3 class="section-title">All Leads ('+state.leads.length+')</h3>'+listHTML+'</div>')
+    +modals+undoHTML;
+}
+
+render();
+</script>
+</body>
+</html>
