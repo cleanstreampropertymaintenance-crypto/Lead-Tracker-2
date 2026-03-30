@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0B1120">
+<title>Lead Tracker</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--c1:#3B82F6;--c2:#F59E0B;--c3:#8B5CF6;--c4:#10B981;--c5:#EF4444;--bg:#0B1120;--bg2:#1E293B;--bg3:#0F172A;--bg4:#1a2332;--tx:#E2E8F0;--tx2:#F1F5F9;--tx3:#94A3B8;--tx4:#64748B;--tx5:#475569;--bd:#1E293B;--bd2:#334155}
+.light{--bg:#F8FAFC;--bg2:#FFF;--bg3:#F1F5F9;--bg4:#E8EDF2;--tx:#1E293B;--tx2:#0F172A;--tx3:#475569;--tx4:#64748B;--tx5:#94A3B8;--bd:#E2E8F0;--bd2:#CBD5E1}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}input,textarea,button,select{font-family:inherit}
+.hw{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px 20px;border-bottom:1px solid var(--bd);background:var(--bg2)}.hl h1{font-size:18px;font-weight:700;color:var(--tx2)}.hl span{font-size:11px;color:var(--tx4)}.hc{position:absolute;left:50%;transform:translateX(-50%)}.hlogo{height:48px;max-width:200px;object-fit:contain}
+.btn{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600}.bp{background:var(--c1);color:#fff}.bo{border:1px solid var(--bd2);background:var(--bg2);color:var(--tx)}
+.legend{padding:8px 20px;display:flex;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--bd)}.legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx3)}.legend-dot{width:8px;height:8px;border-radius:4px}
+.content{padding:16px 20px}.cn{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.cn button{background:none;border:none;color:var(--tx3);font-size:20px;cursor:pointer;padding:8px}.cn h2{font-size:16px;color:var(--tx2)}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.ch{text-align:center;font-size:11px;color:var(--tx5);padding:4px}.cd{min-height:44px;border-radius:8px;padding:2px 4px;cursor:pointer;border:1px solid transparent}.cd.sel{background:var(--c1)}.cd.tod{background:var(--bg4);border-color:var(--c1)}.cd.hev{background:var(--bg4)}.cdn{font-size:12px;text-align:right;padding:2px 4px;color:var(--tx3)}.cd.sel .cdn{color:#fff;font-weight:700}.cd.tod .cdn{color:var(--c1);font-weight:700}.cdots{display:flex;gap:2px;flex-wrap:wrap;padding:0 2px}.cdot{width:6px;height:6px;border-radius:3px}
+.st{font-size:15px;color:var(--tx2);margin:20px 0 12px}.ss{font-size:13px;color:var(--tx4);font-weight:400}
+.card{background:var(--bg2);border-radius:12px;padding:14px;margin-bottom:8px}.ce{text-align:center;padding:24px;color:var(--tx5);font-size:14px}.ln{font-size:15px;font-weight:600;color:var(--tx2)}.lp{font-size:13px;color:var(--tx3)}.lm{font-size:11px;color:var(--tx4);margin-top:2px}.badge{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.ab{padding:7px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;background:transparent;white-space:nowrap}.ac{padding:7px 12px;border-radius:8px;border:1px solid var(--c1);color:var(--c1);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap}
+.ab.na{border:1px solid var(--c2);color:var(--c2)}.ab.cb{border:1px solid var(--c3);color:var(--c3)}.ab.acc{border:1px solid var(--c4);color:var(--c4)}.ab.dec{border:1px solid var(--c5);color:var(--c5)}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;justify-content:center;align-items:center;z-index:999;padding:20px}.ml{background:var(--bg2);border-radius:16px;padding:24px;width:100%;max-width:440px;max-height:90vh;overflow:auto}.ml h2,.ml h3{color:var(--tx2);margin-bottom:16px}
+.fl{display:block;font-size:12px;color:var(--tx3);margin-bottom:4px}.fi{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx);font-size:14px;box-sizing:border-box}.fg{margin-bottom:12px}
+.sb{flex:1;padding:10px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600}.sb.afb{border:2px solid #1877F2;background:#1877F222;color:#1877F2}.sb.ag{border:2px solid #EA4335;background:#EA433522;color:#EA4335}.sb.si{border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3)}
+.br{display:flex;gap:8px}.bc{flex:1;padding:12px;border-radius:8px;border:1px solid var(--bd2);background:transparent;color:var(--tx3);cursor:pointer;font-size:14px}.bs{flex:1;padding:12px;border-radius:8px;border:none;color:#fff;cursor:pointer;font-size:14px;font-weight:600}
+.tp{background:var(--bg3);border-radius:12px;padding:14px;margin-bottom:16px;font-size:14px;color:var(--tx);line-height:1.5;white-space:pre-wrap}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}.ib{background:var(--bg3);border-radius:8px;padding:10px}.il{font-size:11px;color:var(--tx4)}.iv{font-size:13px;color:var(--tx)}
+.li{display:flex;gap:8px;align-items:start;padding:6px 0;border-bottom:1px solid var(--bg4)}.ld{width:8px;height:8px;border-radius:4px;margin-top:5px;flex-shrink:0}.lt{font-size:13px;color:var(--tx)}.ldt{font-size:11px;color:var(--tx5)}
+.sl{flex:2;padding:12px;border-radius:8px;background:var(--c4);color:#fff;font-size:14px;font-weight:600;text-decoration:none;text-align:center;display:block}
+.fc{background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:10px}.fh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.fn2{font-size:12px;font-weight:700;color:var(--c1)}.fr{background:none;border:none;color:var(--c5);cursor:pointer;font-size:16px;padding:2px 6px}.frow{display:flex;gap:8px;align-items:center;margin-bottom:8px}.fsel{padding:8px 10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg2);color:var(--tx);font-size:13px;flex:1}.fta{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg2);color:var(--tx);font-size:13px;resize:vertical;box-sizing:border-box;min-height:55px;line-height:1.4}
+.cr{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:var(--bg3);border-radius:10px;padding:12px}.cl2{font-size:13px;color:var(--tx3);font-weight:600}.csel{padding:8px 10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg2);color:var(--tx);font-size:13px}
+.sbar{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx);font-size:14px;margin-bottom:12px;box-sizing:border-box}.sbar::placeholder{color:var(--tx5)}
+.cdd{position:absolute;left:0;right:0;top:100%;background:var(--bg3);border:1px solid var(--bd2);border-radius:0 0 8px 8px;max-height:150px;overflow-y:auto;z-index:10}.ci{padding:10px 12px;cursor:pointer;font-size:13px;color:var(--tx);border-bottom:1px solid var(--bg4)}.ci:hover{background:var(--bg2)}.ci span{color:var(--tx4);font-size:12px;margin-left:8px}
+.tb{display:flex;border-bottom:1px solid var(--bd)}.tbn{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;color:var(--tx4);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent}.tbn.a{color:var(--c1);border-bottom-color:var(--c1)}
+.cab{padding:6px 12px;border-radius:8px;border:1px solid var(--c1);background:transparent;color:var(--c1);font-size:12px;font-weight:600;cursor:pointer}
+.aw{display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px}.acd{background:var(--bg2);border-radius:16px;padding:32px;width:100%;max-width:380px}.acd h1{text-align:center;margin-bottom:8px;color:var(--tx2);font-size:24px}.acd .sub{text-align:center;color:var(--tx4);font-size:13px;margin-bottom:24px}.ae{background:#EF444422;border:1px solid #EF4444;border-radius:8px;padding:10px;margin-bottom:12px;font-size:13px;color:#FCA5A5}.aok{background:#10B98122;border:1px solid #10B981;border-radius:8px;padding:10px;margin-bottom:12px;font-size:13px;color:#6EE7B7}.adv{text-align:center;color:var(--tx5);margin:16px 0;font-size:13px;position:relative}.adv::before,.adv::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--bd2)}.adv::before{left:0}.adv::after{right:0}.gb{width:100%;padding:12px;border-radius:8px;border:1px solid var(--bd2);background:#fff;color:#333;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}.at{text-align:center;margin-top:16px;font-size:13px;color:var(--tx4)}.at a{color:var(--c1);cursor:pointer;text-decoration:underline}
+.ur{padding:8px 20px;background:var(--bg3);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;min-height:36px}.ur.hu{background:color-mix(in srgb,var(--c2) 8%,var(--bg3))}.ulb{font-size:12px;color:var(--tx5)}.ur.hu .ulb{color:var(--c2)}.ub{padding:5px 14px;border-radius:6px;border:none;font-size:12px;font-weight:700;cursor:pointer}.ub.ua{background:var(--c2);color:#000}.ub.ui{background:var(--bg2);color:var(--bd2);cursor:default}
+.nb{background:var(--bg4);border-bottom:1px solid var(--c1);padding:10px 20px;font-size:13px;color:var(--c1);display:flex;align-items:center;gap:10px;flex-wrap:wrap}.nb button{background:var(--c1);color:#fff;border:none;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}.nd{background:none!important;border:none!important;color:var(--tx4)!important;cursor:pointer;font-size:14px;padding:2px 6px;margin-left:auto}
+.todban{background:color-mix(in srgb,var(--c4) 10%,var(--bg));border-bottom:1px solid color-mix(in srgb,var(--c4) 20%,transparent);padding:10px 20px;font-size:13px;color:var(--c4)}
+.cmr{display:flex;align-items:center;gap:8px;margin-bottom:8px}.cml{font-size:13px;color:var(--tx3);min-width:60px}.cms{flex:1;padding:8px 10px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx);font-size:13px}
+.copt{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;cursor:pointer;margin-bottom:6px;border:1px solid var(--bd2);background:var(--bg3)}.copt.sel{border-color:var(--c1)}
+.cprev{overflow-x:auto;margin:12px 0}.cprev table{width:100%;border-collapse:collapse;font-size:12px}.cprev th{background:var(--bg3);color:var(--tx4);padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd2)}.cprev td{padding:6px 8px;color:var(--tx);border-bottom:1px solid var(--bg4)}
+.dpc{background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:8px}
+.bbtn{display:flex;gap:8px;margin-bottom:12px}.bb{padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;border:1px solid var(--bd2);background:var(--bg2);color:var(--tx)}
+.lw{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;gap:12px}.lw p{color:var(--tx4);font-size:14px}
+.sob{background:none;border:none;color:var(--c5);font-size:11px;cursor:pointer;padding:2px 6px}
+.stb{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--bd2);margin-bottom:16px}.stb button{flex:1;padding:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;background:var(--bg3);color:var(--tx3)}.stb button.a{background:var(--c1);color:#fff}
+.ttg{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--bd2);margin-bottom:12px}.ttg button{flex:1;padding:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:var(--bg3);color:var(--tx3)}.ttg button.a{background:var(--c1);color:#fff}
+.crow{display:flex;align-items:center;gap:10px;margin-bottom:10px;background:var(--bg3);border-radius:8px;padding:8px 12px}.crow label{font-size:13px;color:var(--tx3);flex:1}.crow input[type=color]{width:40px;height:32px;border:none;border-radius:6px;cursor:pointer;background:none}.crow .sw{width:32px;height:32px;border-radius:6px;border:2px solid var(--bd2)}
+.lga{border:2px dashed var(--bd2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;margin-bottom:12px}.lga:hover{border-color:var(--c1)}.lga img{max-height:64px;max-width:240px;object-fit:contain}.lga p{font-size:13px;color:var(--tx4);margin-top:8px}
+.sst{font-size:14px;font-weight:600;color:var(--tx2);margin-bottom:10px}
+.stat-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx3);margin-right:4px;margin-bottom:4px}.stat-btn.active{border-color:var(--c1);background:var(--c1);color:#fff}
+.stat-row{display:flex;flex-wrap:wrap;margin:8px 0}
+</style>
+</head>
+<body>
+<div id="app"><div class="lw"><p>Loading...</p></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+var SB_URL='https://maxtgilxapssttpunghj.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1heHRnaWx4YXBzc3R0cHVuZ2hqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzY1MjcsImV4cCI6MjA5MDIxMjUyN30.G2_3PePekxl9kbpx258goBIO9QPGCKxmEqqngUYJCOo';
+var sb=null;try{sb=supabase.createClient(SB_URL,SB_KEY);}catch(e){}
+var SC={Facebook:"#1877F2",Google:"#EA4335"},MO=["January","February","March","April","May","June","July","August","September","October","November","December"];
+var PKW=["phone","cell","mobile","telephone","tel"],NKW=["name","customer","client","contact"],FKW=["first name","first"],LKW=["last name","last"];
+var STATUS_LABELS={no_contact:"No Contact Yet",reviewed:"Reviewed Estimate",getting_estimates:"Getting Estimates",talk_to_spouse:"Talk to Spouse"};
+var STATUS_KEYS=["no_contact","reviewed","getting_estimates","talk_to_spouse"];
+var DEF_FU=[{day:1,text:"Hey name! Just tried calling and left a voicemail \u2014 went ahead and sent your estimate over. Just hit the accept button at the top to get your spot locked in \ud83d\udc4d"},{day:3,text:"Hey name! Just making sure you got that estimate okay \u2014 just hit accept at the top whenever you're ready and I'll get you on the schedule!"},{day:6,text:"Hey name! We've got an opening this week \u2014 just hit accept on that estimate to grab your spot before it's gone \ud83d\udc4d"},{day:10,text:"Hey name! Still got you in mind \u2014 did you get a chance to look everything over?"},{day:15,text:"Hey name! Just checking in \u2014 is there anything on the estimate that didn't look right?"},{day:20,text:"Hey name! No worries if life's been busy \u2014 still here whenever you're ready!"},{day:25,text:"Hey name! Still thinking it over? Happy to answer anything \u2014 just text me back \ud83d\udc4d"},{day:30,text:"Hey name! Last time reaching out \u2014 if you still want to get the house taken care of just let me know. Hope to hear from you! \ud83d\ude0a"}];
+var DEF_FU_REV=[{day:1,text:"Hey name! Just tried reaching you \u2014 wanted to see if you had any questions about the estimate \ud83d\udc4d"},{day:3,text:"Hey name! Just checking in \u2014 everything look good on that estimate?"},{day:6,text:"Hey name! We've got some openings coming up \u2014 let me know if you're ready to get on the schedule!"},{day:10,text:"Hey name! Just following up \u2014 anything I can help clarify?"},{day:15,text:"Hey name! Still interested in getting the house taken care of? Happy to answer any questions!"},{day:20,text:"Hey name! No worries if you're still thinking it over \u2014 just let me know!"},{day:25,text:"Hey name! Still here if you need anything \ud83d\udc4d"},{day:30,text:"Hey name! Last check-in \u2014 hope to hear from you!"}];
+var DEF_FU_EST=[{day:1,text:"Hey name! Just tried calling \u2014 I know you're comparing a few options. If there's any info I can give you to help make your decision easier, just let me know!"},{day:3,text:"Hey name! Checking in \u2014 have you had a chance to compare everything? Happy to walk through what makes us different \ud83d\udc4d"},{day:6,text:"Hey name! Just wanted to follow up \u2014 if price or scope is a factor I'm happy to go over the details with you!"},{day:10,text:"Hey name! Still shopping around? No pressure \u2014 just want to make sure you have everything you need from our end!"},{day:15,text:"Hey name! Let me know if there's anything I can do to earn your business \u2014 happy to answer any questions!"},{day:20,text:"Hey name! Still here whenever you're ready to make a decision \ud83d\udc4d"},{day:25,text:"Hey name! Just checking in one more time \u2014 hope I can help!"},{day:30,text:"Hey name! Last follow-up from me \u2014 if you ever want to move forward just reach out! \ud83d\ude0a"}];
+var DEF_FU_SP=[{day:1,text:"Hey name! Just tried reaching you \u2014 no rush, I know you need to talk it over. Just let me know when you're ready!"},{day:3,text:"Hey name! Checking in \u2014 have you had a chance to discuss everything?"},{day:6,text:"Hey name! Just following up \u2014 happy to answer any questions you or your spouse might have!"},{day:10,text:"Hey name! Still thinking it over with the family? No rush \u2014 just let me know if I can help!"},{day:15,text:"Hey name! Wanted to check in \u2014 if there's anything I can clarify for either of you, just say the word!"},{day:20,text:"Hey name! Still here whenever you two are ready \ud83d\udc4d"},{day:25,text:"Hey name! Just a friendly follow-up \u2014 hope to hear from you soon!"},{day:30,text:"Hey name! Last check-in \u2014 reach out whenever you're ready! \ud83d\ude0a"}];
+var DEF_CFG={capDay:30,callbackMissedText:"Hey name! Tried calling you back at the time we set up \u2014 no worries! Just give me a call or text back whenever you get a chance \ud83d\udc4d",followUps:DEF_FU,followUpsReviewed:DEF_FU_REV,followUpsEstimates:DEF_FU_EST,followUpsSpouse:DEF_FU_SP};
+var DEF_COLORS=["#3B82F6","#F59E0B","#8B5CF6","#10B981","#EF4444"];
+var CL=["Primary","No Answer","Callback","Accepted","Declined"];
+
+function cp(r){var d=r.replace(/\D/g,"");if(d.length===11&&d[0]==="1")d=d.substring(1);return d.length>=10?d.substring(0,10):d;}
+function fp(p){var d=p.replace(/\D/g,"");if(d.length===10)return"("+d.slice(0,3)+") "+d.slice(3,6)+"-"+d.slice(6);return p;}
+function td(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function dl(ed,cap){var s=new Date(ed);s.setHours(0,0,0,0);var t=new Date();t.setHours(0,0,0,0);return cap-Math.floor((t-s)/864e5);}
+function ea(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/</g,"&lt;");}
+function f12(t){if(!t)return"";var p=t.split(":");var h=parseInt(p[0]),m=p[1],a=h>=12?"PM":"AM";h=h%12;if(!h)h=12;return h+":"+m+" "+a;}
+function gfn(n){return n.trim().split(/\s+/)[0];}
+function an(t,n){return t.replace(/\bname\b/gi,gfn(n));}
+function isPH(h){var l=h.toLowerCase().trim();for(var i=0;i<PKW.length;i++)if(l.indexOf(PKW[i])!==-1)return true;return false;}
+function isNH(h){var l=h.toLowerCase().trim();if(isPH(h)||isFH(h)||isLH(h))return false;for(var i=0;i<NKW.length;i++)if(l.indexOf(NKW[i])!==-1)return true;return false;}
+function isFH(h){var l=h.toLowerCase().trim();for(var i=0;i<FKW.length;i++)if(l===FKW[i])return true;return false;}
+function isLH(h){var l=h.toLowerCase().trim();for(var i=0;i<LKW.length;i++)if(l===LKW[i])return true;return false;}
+function pcsv(line){var r=[],c="",q=false;for(var i=0;i<line.length;i++){var ch=line[i];if(q){if(ch==='"'&&(i+1>=line.length||line[i+1]===',')){q=false;}else c+=ch;}else{if(ch==='"')q=true;else if(ch===','){r.push(c.trim());c="";}else c+=ch;}}r.push(c.trim());return r;}
+function d2l(r){return{id:r.id,name:r.name,phone:r.phone,source:r.source,estimateDate:r.estimate_date,notes:r.notes||"",status:r.status,actions:r.actions||[],contactStatus:r.contact_status||"no_contact",statusNaOffset:r.status_na_offset||0,createdAt:r.created_at};}
+function l2d(l,uid){return{user_id:uid,name:l.name,phone:l.phone,source:l.source,estimate_date:l.estimateDate,notes:l.notes,status:l.status,actions:l.actions,contact_status:l.contactStatus||"no_contact",status_na_offset:l.statusNaOffset||0};}
+
+function getFUSeq(cfg,contactStatus){
+  if(contactStatus==="reviewed")return cfg.followUpsReviewed||DEF_FU_REV;
+  if(contactStatus==="getting_estimates")return cfg.followUpsEstimates||DEF_FU_EST;
+  if(contactStatus==="talk_to_spouse")return cfg.followUpsSpouse||DEF_FU_SP;
+  return cfg.followUps||DEF_FU;
+}
+
+/* THEME */
+function exCols(src,cb){var img=new Image();img.crossOrigin="anonymous";img.onload=function(){var cv=document.createElement("canvas");cv.width=50;cv.height=50;var ctx=cv.getContext("2d");ctx.drawImage(img,0,0,50,50);var d=ctx.getImageData(0,0,50,50).data,bk={};for(var i=0;i<d.length;i+=4){if(d[i+3]<128)continue;var kr=Math.round(d[i]/32)*32,kg=Math.round(d[i+1]/32)*32,kb=Math.round(d[i+2]/32)*32,k=kr+","+kg+","+kb;if(!bk[k])bk[k]={r:d[i],g:d[i+1],b:d[i+2],n:0};bk[k].n++;bk[k].r=(bk[k].r+d[i])/2;bk[k].g=(bk[k].g+d[i+1])/2;bk[k].b=(bk[k].b+d[i+2])/2;}var sorted=Object.values(bk).sort(function(a,b){return b.n-a.n;}),cols=[];for(var i=0;i<sorted.length&&cols.length<5;i++){var s=sorted[i],r2=Math.round(s.r),g=Math.round(s.g),b=Math.round(s.b),ok=true;for(var j=0;j<cols.length;j++){if(Math.abs(r2-cols[j][0])+Math.abs(g-cols[j][1])+Math.abs(b-cols[j][2])<80){ok=false;break;}}var lum=r2*0.299+g*0.587+b*0.114;if(lum<30||lum>240)continue;if(ok)cols.push([r2,g,b]);}while(cols.length<5)cols.push([59,130,246]);cb(cols.map(function(c){return"#"+c.map(function(v){return Math.min(255,Math.max(0,v)).toString(16).padStart(2,"0");}).join("");}));};img.onerror=function(){cb(DEF_COLORS.slice());};img.src=src;}
+function apT(){var r=document.documentElement;if(S.themeMode==="light")r.classList.add("light");else r.classList.remove("light");var c=S.themeColors.length>=5?S.themeColors:DEF_COLORS;for(var i=0;i<5;i++)r.style.setProperty("--c"+(i+1),c[i]);}
+
+var S={userId:null,userEmail:null,loading:true,authMode:"signin",authError:"",authSuccess:"",authLoading:false,leads:[],config:JSON.parse(JSON.stringify(DEF_CFG)),contacts:[],view:"calendar",currentMonth:{year:new Date().getFullYear(),month:new Date().getMonth()},selectedDate:td(new Date()),showForm:false,showSettings:false,settingsTab:"followups",fuStatusTab:"no_contact",editingLead:null,editMode:false,textMessage:null,copied:false,confirmAction:null,callbackLeadId:null,callbackDate:"",callbackTime:"",form:{name:"",phone:"",source:"Facebook",estimateDate:td(new Date()),notes:""},showAddContact:false,contactForm:{name:"",phone:"",source:"Facebook"},undoData:null,undoLabel:"",contactSearch:"",csvImport:null,showNotifRequest:false,notifDismissed:false,logoBase64:"",themeMode:"dark",themeColors:DEF_COLORS.slice()};
+function SS(u){Object.assign(S,u);apT();render();}
+
+/* AUTH */
+async function doSI(){var e=document.getElementById("ae"),p=document.getElementById("ap");if(!e||!p||!e.value||!p.value){SS({authError:"Enter email and password"});return;}SS({authLoading:true,authError:""});var{error}=await sb.auth.signInWithPassword({email:e.value.trim(),password:p.value});if(error)SS({authError:error.message,authLoading:false});else SS({authLoading:false});}
+async function doSU(){var e=document.getElementById("ae"),p=document.getElementById("ap");if(!e||!p||!e.value||!p.value){SS({authError:"Enter email and password"});return;}if(p.value.length<6){SS({authError:"Password 6+ chars"});return;}SS({authLoading:true,authError:""});var{error}=await sb.auth.signUp({email:e.value.trim(),password:p.value});if(error)SS({authError:error.message,authLoading:false});else SS({authLoading:false,authSuccess:"Check email to confirm!",authMode:"signin"});}
+async function doGS(){var{error}=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:window.location.origin+window.location.pathname}});if(error)SS({authError:error.message});}
+async function doSO(){await sb.auth.signOut();Object.assign(S,{userId:null,userEmail:null,leads:[],contacts:[],config:JSON.parse(JSON.stringify(DEF_CFG)),logoBase64:"",themeMode:"dark",themeColors:DEF_COLORS.slice(),loading:false});apT();render();}
+
+/* DATA */
+async function loadAll(){S.loading=true;render();try{var{data:ld}=await sb.from("leads").select("*").eq("user_id",S.userId).order("created_at");S.leads=(ld||[]).map(d2l);var{data:cd}=await sb.from("contacts").select("*").eq("user_id",S.userId);S.contacts=(cd||[]).map(function(r){return{id:r.id,name:r.name,phone:r.phone,source:r.source||"Facebook",notes:r.notes||""};});var{data:cfg}=await sb.from("user_config").select("*").eq("user_id",S.userId).maybeSingle();if(cfg){S.config={capDay:cfg.cap_day,callbackMissedText:cfg.callback_missed_text||DEF_CFG.callbackMissedText,followUps:cfg.follow_ups||DEF_FU,followUpsReviewed:cfg.follow_ups_reviewed||DEF_FU_REV,followUpsEstimates:cfg.follow_ups_estimates||DEF_FU_EST,followUpsSpouse:cfg.follow_ups_spouse||DEF_FU_SP};S.logoBase64=cfg.logo_base64||"";S.themeMode=cfg.theme_mode||"dark";S.themeColors=(cfg.theme_colors&&cfg.theme_colors.length>=5)?cfg.theme_colors:DEF_COLORS.slice();}else{await sb.from("user_config").insert({user_id:S.userId,cap_day:DEF_CFG.capDay,callback_missed_text:DEF_CFG.callbackMissedText,follow_ups:DEF_FU,follow_ups_reviewed:DEF_FU_REV,follow_ups_estimates:DEF_FU_EST,follow_ups_spouse:DEF_FU_SP,logo_base64:"",theme_mode:"dark",theme_colors:DEF_COLORS});S.config=JSON.parse(JSON.stringify(DEF_CFG));}}catch(e){console.error(e);}S.loading=false;apT();render();chkN();}
+async function dbI(l){var{data,error}=await sb.from("leads").insert(l2d(l,S.userId)).select().single();if(error)return null;return d2l(data);}
+async function dbU(id,u){await sb.from("leads").update(u).eq("id",id);}
+async function dbD(id){await sb.from("leads").delete().eq("id",id);}
+async function dbSC(){var c=S.config;await sb.from("user_config").upsert({user_id:S.userId,cap_day:c.capDay,callback_missed_text:c.callbackMissedText,follow_ups:c.followUps,follow_ups_reviewed:c.followUpsReviewed,follow_ups_estimates:c.followUpsEstimates,follow_ups_spouse:c.followUpsSpouse,logo_base64:S.logoBase64,theme_mode:S.themeMode,theme_colors:S.themeColors},{onConflict:"user_id"});}
+async function dbRC(cs){await sb.from("contacts").delete().eq("user_id",S.userId);if(cs.length)await sb.from("contacts").insert(cs.map(function(c){return{user_id:S.userId,name:c.name,phone:c.phone,source:c.source||"Facebook",notes:c.notes||""};}));var{data}=await sb.from("contacts").select("*").eq("user_id",S.userId);S.contacts=(data||[]).map(function(r){return{id:r.id,name:r.name,phone:r.phone,source:r.source||"Facebook",notes:r.notes||""};});}
+async function dbAC(cs){if(!cs.length)return;await sb.from("contacts").insert(cs.map(function(c){return{user_id:S.userId,name:c.name,phone:c.phone,source:c.source||"Facebook",notes:c.notes||""};}));var{data}=await sb.from("contacts").select("*").eq("user_id",S.userId);S.contacts=(data||[]).map(function(r){return{id:r.id,name:r.name,phone:r.phone,source:r.source||"Facebook",notes:r.notes||""};});}
+async function dbDC(id){await sb.from("contacts").delete().eq("id",id);S.contacts=S.contacts.filter(function(c){return c.id!==id;});}
+
+/* LOGIC */
+function cNA(a){return a.filter(function(x){return x.type==="no_answer";}).length;}
+function aCB(a){var cb=null,na=null;for(var i=a.length-1;i>=0;i--){if(!cb&&a[i].type==="callback")cb=a[i];if(!na&&a[i].type==="no_answer")na=a[i];}if(!cb)return null;return(na&&new Date(na.date)>new Date(cb.date))?null:cb;}
+function gSched(ed,a,cfg,contactStatus,naOffset){
+  var s=new Date(ed);s.setHours(0,0,0,0);
+  var totalNA=cNA(a),seqPos=totalNA-(naOffset||0);
+  var fu=getFUSeq(cfg,contactStatus);
+  if(seqPos<0)seqPos=0;
+  if(seqPos>=fu.length)return[];
+  var today=new Date();today.setHours(0,0,0,0);
+
+  /* Check for missed callback */
+  var lastCB=null,lastNA=null;
+  for(var i=a.length-1;i>=0;i--){
+    if(!lastCB&&a[i].type==="callback")lastCB=a[i];
+    if(!lastNA&&a[i].type==="no_answer")lastNA=a[i];
+  }
+  var missedCB=lastCB&&lastNA&&new Date(lastNA.date)>new Date(lastCB.date);
+
+  if(missedCB){
+    /* Find next sequence step 2+ days after callback date */
+    var cbDate=new Date(lastCB.callbackDate+"T12:00:00");cbDate.setHours(0,0,0,0);
+    var minDate=new Date(cbDate);minDate.setDate(minDate.getDate()+2);
+
+    for(var idx=seqPos;idx<fu.length;idx++){
+      var dy=fu[idx].day;
+      if(dy>=cfg.capDay){
+        var capDate=new Date(s);capDate.setDate(capDate.getDate()+cfg.capDay);
+        if(capDate>=minDate)return[{date:td(capDate),daysSince:cfg.capDay,textIndex:fu.length-1}];
+        return[];
+      }
+      var nd=new Date(s);nd.setDate(nd.getDate()+dy);
+      if(nd>=minDate)return[{date:td(nd),daysSince:dy,textIndex:idx}];
+    }
+    return[];
+  }
+
+  /* Normal scheduling — no missed callback */
+  for(var idx=seqPos;idx<fu.length;idx++){
+    var dy=fu[idx].day;
+    if(dy>=cfg.capDay){
+      var capDate=new Date(s);capDate.setDate(capDate.getDate()+cfg.capDay);
+      if(capDate>=today)return[{date:td(capDate),daysSince:cfg.capDay,textIndex:fu.length-1}];
+      return[];
+    }
+    var nd=new Date(s);nd.setDate(nd.getDate()+dy);
+    if(nd>=today)return[{date:td(nd),daysSince:dy,textIndex:idx}];
+  }
+  return[];
+}
+function actL(){return S.leads.filter(function(l){return l.status==="active"&&dl(l.estimateDate,S.config.capDay)>=0;});}
+function cFU(){var m={},al=actL(),cfg=S.config;al.forEach(function(l){var cb=aCB(l.actions);if(cb){var d=cb.callbackDate;if(!m[d])m[d]=[];m[d].push(Object.assign({},l,{followUpType:"callback",callbackTime:cb.callbackTime}));return;}    var sc=gSched(l.estimateDate,l.actions,cfg,l.contactStatus||"no_contact",l.statusNaOffset||0);sc.forEach(function(s){if(!m[s.date])m[s.date]=[];m[s.date].push(Object.assign({},l,{followUpType:"call",daysSince:s.daysSince,textIndex:s.textIndex}));});});return m;}
+
+function sUndo(l,lb){S.undoData=JSON.parse(JSON.stringify(l));S.undoLabel=lb;}
+async function doUndo(){if(!S.undoData)return;var p=S.undoData;await dbU(p.id,{actions:p.actions,status:p.status,contact_status:p.contactStatus,status_na_offset:p.statusNaOffset||0});S.leads=S.leads.map(function(l){return l.id===p.id?Object.assign({},l,{actions:p.actions,status:p.status,contactStatus:p.contactStatus,statusNaOffset:p.statusNaOffset||0}):l;});SS({undoData:null,undoLabel:"",textMessage:null});}
+
+async function addLead(){var nE=document.getElementById("f-name"),pE=document.getElementById("f-phone"),dE=document.getElementById("f-date"),ntE=document.getElementById("f-notes");var n=nE?nE.value.trim():"",p=pE?pE.value.trim():"",d=dE?dE.value:S.form.estimateDate,nt=ntE?ntE.value.trim():"";if(!n||!p)return;  var nl={name:n,phone:cp(p),source:S.form.source,estimateDate:d,notes:nt,status:"active",actions:[],contactStatus:"no_contact",statusNaOffset:0};var sv=await dbI(nl);if(!sv)return;S.leads.push(sv);SS({showForm:false,form:{name:"",phone:"",source:"Facebook",estimateDate:td(new Date()),notes:""}});}
+async function addCon(){var nE=document.getElementById("ac-name"),pE=document.getElementById("ac-phone"),ntE=document.getElementById("ac-notes");var n=nE?nE.value.trim():"",p=pE?cp(pE.value.trim()):"",nt=ntE?ntE.value.trim():"";if(!n)return;var{data,error}=await sb.from("contacts").insert({user_id:S.userId,name:n,phone:p,source:S.contactForm.source,notes:nt}).select().single();if(error)return;S.contacts.push({id:data.id,name:data.name,phone:data.phone,source:data.source||"Facebook",notes:data.notes||""});SS({showAddContact:false,contactForm:{name:"",phone:"",source:"Facebook"}});}
+async function hNA(id){var ld=S.leads.find(function(l){return l.id===id;});if(!ld)return;sUndo(ld,"No Answer \u2014 "+ld.name);
+  var cfg=S.config,cb=aCB(ld.actions),totalNA=cNA(ld.actions),msg=null;
+  var fu=getFUSeq(cfg,ld.contactStatus||"no_contact");
+  var seqPos=totalNA-(ld.statusNaOffset||0);
+  if(seqPos<0)seqPos=0;
+  console.log("No Answer:",ld.name,"totalNA:",totalNA,"offset:",ld.statusNaOffset,"seqPos:",seqPos,"status:",ld.contactStatus);
+  if(cb){msg=an(cfg.callbackMissedText,ld.name);}
+  else{
+    var ti=seqPos;
+    /* If next step day would exceed cap, jump to last text */
+    if(ti<fu.length&&fu[ti].day>=cfg.capDay)ti=fu.length-1;
+    if(ti>=fu.length)ti=fu.length-1;
+    msg=fu.length?an(fu[ti].text,ld.name):null;
+  }
+  var na=ld.actions.concat([{type:"no_answer",date:new Date().toISOString()}]);
+  var ns=ld.status;
+  var newSeqPos=cNA(na)-(ld.statusNaOffset||0);
+  if(newSeqPos>=fu.length)ns="expired";
+  else if(fu[newSeqPos]&&fu[newSeqPos].day>=cfg.capDay)ns="expired";
+  await dbU(id,{actions:na,status:ns});
+  S.leads=S.leads.map(function(l){return l.id===id?Object.assign({},l,{actions:na,status:ns}):l;});
+  SS({confirmAction:null,textMessage:msg?{leadName:ld.name,phone:ld.phone,message:msg,stepNumber:cb?"CB":(seqPos+1),totalSteps:fu.length,isCallback:!!cb}:null,copied:false});}
+async function rAct(id,type){var ld=S.leads.find(function(l){return l.id===id;});if(ld)sUndo(ld,type.charAt(0).toUpperCase()+type.slice(1)+" \u2014 "+ld.name);var na=ld.actions.concat([{type:type,date:new Date().toISOString()}]);var ns=type==="accepted"?"accepted":type==="declined"?"declined":ld.status;await dbU(id,{actions:na,status:ns});S.leads=S.leads.map(function(l){return l.id===id?Object.assign({},l,{actions:na,status:ns}):l;});SS({confirmAction:null});}
+async function sCB(id){if(!S.callbackDate)return;var ld=S.leads.find(function(l){return l.id===id;});if(ld)sUndo(ld,"Callback \u2014 "+ld.name);var na=ld.actions.concat([{type:"callback",date:new Date().toISOString(),callbackDate:S.callbackDate,callbackTime:S.callbackTime}]);await dbU(id,{actions:na});S.leads=S.leads.map(function(l){return l.id===id?Object.assign({},l,{actions:na}):l;});SS({callbackLeadId:null,callbackDate:"",callbackTime:""});}
+async function dLead(id){await dbD(id);S.leads=S.leads.filter(function(l){return l.id!==id;});SS({editingLead:null,editMode:false});}
+async function sEdit(){var nE=document.getElementById("ed-n"),pE=document.getElementById("ed-p"),ntE=document.getElementById("ed-nt");if(!nE||!pE)return;var n=nE.value.trim(),p=pE.value.trim(),nt=ntE?ntE.value.trim():"";if(!n||!p)return;var id=S.editingLead.id;var fb=document.getElementById("ed-fb");var src=fb&&fb.className.indexOf("afb")!==-1?"Facebook":"Google";await dbU(id,{name:n,phone:p,notes:nt,source:src});S.leads=S.leads.map(function(l){return l.id===id?Object.assign({},l,{name:n,phone:p,notes:nt,source:src}):l;});SS({editingLead:S.leads.find(function(l){return l.id===id;}),editMode:false});}
+async function setLeadStatus(id,status){
+  var ld=S.leads.find(function(l){return l.id===id;});if(!ld)return;
+  sUndo(ld,"Status \u2014 "+ld.name);
+  var currentNA=cNA(ld.actions);
+  console.log("Setting status:",status,"NA count:",currentNA,"Saving offset:",currentNA);
+  var{error}=await sb.from("leads").update({contact_status:status,status_na_offset:currentNA}).eq("id",id);
+  if(error)console.error("Status save error:",error);
+  S.leads=S.leads.map(function(l){return l.id===id?Object.assign({},l,{contactStatus:status,statusNaOffset:currentNA}):l;});
+  var updated=S.leads.find(function(l){return l.id===id;});
+  console.log("Updated lead statusNaOffset:",updated.statusNaOffset);
+  SS({editingLead:updated});
+}
+function cpTxt(t){navigator.clipboard.writeText(t).then(function(){SS({copied:true});setTimeout(function(){SS({copied:false});},2000);}).catch(function(){var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);SS({copied:true});setTimeout(function(){SS({copied:false});},2000);});}
+
+async function saveSett(){
+  /* Save follow-ups from whichever status tab is showing */
+  var capE=document.getElementById("cap-day"),cbE=document.getElementById("cb-mt");
+  if(capE)S.config.capDay=parseInt(capE.value);
+  if(cbE)S.config.callbackMissedText=cbE.value;
+  /* Read FU from DOM if on followups tab */
+  if(S.settingsTab==="followups"){
+    var fuKey={no_contact:"followUps",reviewed:"followUpsReviewed",getting_estimates:"followUpsEstimates",talk_to_spouse:"followUpsSpouse"}[S.fuStatusTab];
+    var fu=[];var cnt=document.querySelectorAll(".fc").length;
+    for(var i=0;i<cnt;i++){var dE=document.getElementById("fu-d-"+i),tE=document.getElementById("fu-t-"+i);if(dE&&tE)fu.push({day:parseInt(dE.value),text:tE.value});}
+    if(fu.length)S.config[fuKey]=fu;
+  }
+  await dbSC();SS({showSettings:false});
+}
+function addFU(){var fk={no_contact:"followUps",reviewed:"followUpsReviewed",getting_estimates:"followUpsEstimates",talk_to_spouse:"followUpsSpouse"}[S.fuStatusTab];var c=JSON.parse(JSON.stringify(S.config));var arr=c[fk];var ld2=arr.length?arr[arr.length-1].day+1:1;if(ld2>c.capDay)ld2=c.capDay;arr.push({day:ld2,text:"Hey name!"});S.config=c;render();}
+function remFU(i){var fk={no_contact:"followUps",reviewed:"followUpsReviewed",getting_estimates:"followUpsEstimates",talk_to_spouse:"followUpsSpouse"}[S.fuStatusTab];var c=JSON.parse(JSON.stringify(S.config));c[fk].splice(i,1);S.config=c;render();}
+function rstCfg(){S.config=JSON.parse(JSON.stringify(DEF_CFG));render();}
+function rstTheme(){S.themeColors=DEF_COLORS.slice();S.logoBase64="";apT();render();}
+
+function hLogo(){var inp=document.createElement("input");inp.type="file";inp.accept="image/*";inp.onchange=function(e){var f=e.target.files[0];if(!f)return;if(f.size>500000){alert("Max 500KB");return;}var rd=new FileReader();rd.onload=function(ev){S.logoBase64=ev.target.result;exCols(ev.target.result,function(cols){S.themeColors=cols;apT();render();});};rd.readAsDataURL(f);};inp.click();}
+function remLogo(){S.logoBase64="";S.themeColors=DEF_COLORS.slice();apT();render();}
+function setMd(m){S.themeMode=m;apT();render();}
+function setCol(i){var el=document.getElementById("cp-"+i);if(!el)return;S.themeColors[i]=el.value;apT();render();}
+
+/* CSV */
+function csvF(){var inp=document.createElement("input");inp.type="file";inp.accept=".csv";inp.onchange=function(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(ev){var txt=ev.target.result,lines=txt.split(/\r?\n/).filter(function(l){return l.trim();});if(lines.length<2)return;var hd=pcsv(lines[0]),rows=[];for(var i=1;i<lines.length;i++){var p=pcsv(lines[i]);if(p.length>=2)rows.push(p);}var nc=-1,fnc=-1,lnc=-1,pc=-1;for(var h=0;h<hd.length;h++){if(pc===-1&&isPH(hd[h]))pc=h;if(nc===-1&&isNH(hd[h]))nc=h;if(fnc===-1&&isFH(hd[h]))fnc=h;if(lnc===-1&&isLH(hd[h]))lnc=h;}var nm=fnc!==-1?"split":"full";if(nc===-1&&nm==="full")nc=0;if(fnc===-1)fnc=hd.length>1?1:0;if(lnc===-1)lnc=hd.length>2?2:0;SS({csvImport:{step:"mapping",headers:hd,rows:rows,nameMode:nm,nameCol:nc,fnameCol:fnc,lnameCol:lnc,phoneCol:pc,mode:"add",duplicates:[],clean:[]}});};rd.readAsText(f);};inp.click();}
+function csvNm(row,ci){if(ci.nameMode==="split"){var fn=ci.fnameCol>=0&&ci.fnameCol<row.length?row[ci.fnameCol].trim():"";var ln=ci.lnameCol>=0&&ci.lnameCol<row.length?row[ci.lnameCol].trim():"";return(fn+(ln?" "+ln:"")).trim();}return ci.nameCol>=0&&ci.nameCol<row.length?row[ci.nameCol].trim():"";}
+function csvPh(row,ci){if(ci.phoneCol<0)return"";return cp(ci.phoneCol<row.length?row[ci.phoneCol]:"");}
+function csvProc(){var ci=S.csvImport;var nmE=document.querySelector('input[name="cnm"]:checked');if(nmE)ci.nameMode=nmE.value;if(ci.nameMode==="full"){var nE=document.getElementById("cnc");if(nE)ci.nameCol=parseInt(nE.value);}else{var fE=document.getElementById("cfnc"),lE=document.getElementById("clnc");if(fE)ci.fnameCol=parseInt(fE.value);if(lE)ci.lnameCol=parseInt(lE.value);}var pE=document.getElementById("cpc");if(pE)ci.phoneCol=parseInt(pE.value);document.querySelectorAll('input[name="cmod"]').forEach(function(el){if(el.checked)ci.mode=el.value;});var nc=[];ci.rows.forEach(function(r){var n=csvNm(r,ci),p=csvPh(r,ci);if(n)nc.push({name:n,phone:p});});if(ci.mode==="replace"){ci.clean=nc;ci.duplicates=[];csvFin();return;}var dups=[],clean=[];nc.forEach(function(n){var m=S.contacts.find(function(c){return(c.phone&&n.phone&&c.phone===n.phone)||c.name.toLowerCase()===n.name.toLowerCase();});if(m)dups.push({csv:n,existing:m,action:"skip"});else clean.push(n);});if(!dups.length){ci.clean=clean;ci.duplicates=[];csvFin();return;}ci.duplicates=dups;ci.clean=clean;ci.step="duplicates";render();}
+function csvDA(i,a){S.csvImport.duplicates[i].action=a;render();}
+function csvBk(a){S.csvImport.duplicates.forEach(function(d){d.action=a;});render();}
+async function csvFin(){var ci=S.csvImport,imp=ci.clean.slice();if(ci.duplicates)ci.duplicates.forEach(function(d){if(d.action==="import")imp.push(d.csv);});if(ci.mode==="replace")await dbRC(imp);else await dbAC(imp);SS({csvImport:null});alert("Imported "+imp.length);}
+function csvPv(){var el=document.getElementById("cpv");if(!el||!S.csvImport)return;var ci=S.csvImport,h="",sh=ci.rows.slice(0,3);for(var i=0;i<sh.length;i++)h+="<tr><td>"+ea(csvNm(sh[i],ci))+"</td><td>"+(csvPh(sh[i],ci)?fp(csvPh(sh[i],ci)):"(none)")+"</td></tr>";el.innerHTML=h;}
+function csvNM(m){S.csvImport.nameMode=m;render();}
+
+function chkN(){if(!("Notification" in window))return;if(Notification.permission==="default"&&!S.notifDismissed)S.showNotifRequest=true;if(Notification.permission==="granted")fireN();render();}
+function reqN(){Notification.requestPermission().then(function(p){S.showNotifRequest=false;if(p==="granted")fireN();render();});}
+function fireN(){var fu=cFU(),t=td(new Date()),tl=fu[t]||[];if(!tl.length)return;try{new Notification("Follow-ups Today",{body:tl.map(function(l){return l.name;}).join(", ")});}catch(e){}}
+
+function uDD(){var el=document.getElementById("f-name");if(!el)return;S.form.name=el.value;var dd=document.getElementById("cdd2");if(!dd)return;if(!el.value.trim()){dd.innerHTML="";dd.style.display="none";return;}var sq=el.value.toLowerCase(),ms=S.contacts.filter(function(c){return c.name.toLowerCase().indexOf(sq)!==-1;}).slice(0,5);if(!ms.length){dd.innerHTML="";dd.style.display="none";return;}var h="";for(var i=0;i<ms.length;i++)h+='<div class="ci" data-i="'+i+'">'+ea(ms[i].name)+'<span>'+fp(ms[i].phone)+'</span></div>';dd.innerHTML=h;dd.style.display="block";var its=dd.querySelectorAll(".ci");for(var i=0;i<its.length;i++)(function(x){its[x].onmousedown=function(e){e.preventDefault();var c=ms[x];document.getElementById("f-name").value=c.name;document.getElementById("f-phone").value=c.phone;S.form.name=c.name;S.form.phone=c.phone;dd.innerHTML="";dd.style.display="none";};})(i);}
+function uCS(){var el=document.getElementById("css");if(!el)return;S.contactSearch=el.value;var ct=document.getElementById("csl");if(ct)ct.innerHTML=bCL();}
+function bCL(){var cfg=S.config,cq=S.contactSearch.toLowerCase(),lp={};S.leads.forEach(function(l){lp[cp(l.phone)]=true;});var fl=S.leads.slice().reverse();if(cq)fl=fl.filter(function(l){return l.name.toLowerCase().indexOf(cq)!==-1||l.phone.indexOf(cq)!==-1;});var ls="";for(var i=0;i<fl.length;i++){var l=fl[i];var sc2=l.status==="active"?(SC[l.source]||"var(--c1)"):l.status==="accepted"?"var(--c4)":"var(--c5)";var sl2=l.status==="active"?l.source:l.status.charAt(0).toUpperCase()+l.status.slice(1);var dl2=l.status==="active"?'<div style="font-size:11px;color:var(--tx4);margin-top:4px">'+dl(l.estimateDate,cfg.capDay)+'d left</div>':"";ls+='<div class="card" style="cursor:pointer" onclick="SS({editingLead:S.leads.find(function(x){return x.id===\''+l.id+'\'}),editMode:false})"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="ln">'+l.name+'</div><div class="lp">'+fp(l.phone)+'</div></div><div style="text-align:right"><span class="badge" style="background:'+sc2+'22;color:'+sc2+'">'+sl2+'</span>'+dl2+'</div></div></div>';}
+var io=S.contacts.filter(function(c){return!lp[cp(c.phone)];});if(cq)io=io.filter(function(c){return c.name.toLowerCase().indexOf(cq)!==-1||c.phone.indexOf(cq)!==-1;});var is="";for(var i=0;i<io.length;i++){var c=io[i];is+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="ln">'+c.name+'</div><div class="lp">'+fp(c.phone)+'</div></div><div style="display:flex;gap:6px;align-items:center"><button class="cab" onclick="S.form.name=\''+ea(c.name)+'\';S.form.phone=\''+ea(c.phone)+'\';S.form.source=\''+(c.source||"Facebook")+'\';S.form.estimateDate=td(new Date());SS({showForm:true})">+ Lead</button><button style="background:none;border:none;color:var(--c5);cursor:pointer;font-size:14px;padding:4px" onclick="dbDC(\''+c.id+'\').then(render)">\u2715</button></div></div></div>';}
+var h="";if(fl.length)h+='<h3 class="st">Leads ('+fl.length+')</h3>'+ls;if(io.length)h+='<h3 class="st">Imported ('+io.length+')</h3>'+is;if(!fl.length&&!io.length)h+='<div class="card ce">No contacts found</div>';return h;}
+
+function bCard(l,cfg){
+  var totalNA=cNA(l.actions),fu=getFUSeq(cfg,l.contactStatus||"no_contact");
+  var seqPos=totalNA-(l.statusNaOffset||0);if(seqPos<0)seqPos=0;
+  var meta="";
+  if(l.followUpType==="callback"&&l.callbackTime)meta='<div style="font-size:12px;color:var(--c3);margin-top:2px">\ud83d\udcde Callback at '+f12(l.callbackTime)+'</div>';
+  else if(l.followUpType==="callback")meta='<div style="font-size:12px;color:var(--c3);margin-top:2px">\ud83d\udcde Scheduled Callback</div>';
+  else if(l.followUpType==="call")meta='<div class="lm">Follow-up #'+(seqPos+1)+' of '+fu.length+' \u00b7 Day '+l.daysSince+'</div>';
+  var statusLabel=STATUS_LABELS[l.contactStatus||"no_contact"];
+  var sc2=SC[l.source]||"var(--c1)",ph=l.phone.replace(/\D/g,""),nm=ea(l.name);
+  var p=[];
+  p.push('<div class="card">');
+  p.push('<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">');
+  p.push('<div onclick="SS({editingLead:S.leads.find(function(x){return x.id===\''+l.id+'\'}),editMode:false})" style="cursor:pointer">');
+  p.push('<div class="ln">'+l.name+'</div>');
+  p.push('<div class="lp">'+fp(l.phone)+'</div>');
+  p.push(meta);
+  if(l.contactStatus&&l.contactStatus!=="no_contact")p.push('<div style="font-size:10px;color:var(--c3);margin-top:2px">'+statusLabel+'</div>');
+  p.push('</div>');
+  p.push('<span class="badge" style="background:'+sc2+'22;color:'+sc2+'">'+l.source+'</span>');
+  p.push('</div>');
+  p.push('<div class="acts">');
+  p.push('<a href="tel:'+ph+'" class="ac">\ud83d\udcde Call</a>');
+  p.push('<button class="ab na" onclick="hNA(\''+l.id+'\')">No Answer</button>');
+  p.push('<button class="ab cb" onclick="SS({callbackLeadId:\''+l.id+'\'})">Callback</button>');
+  p.push('<button class="ab acc" onclick="SS({confirmAction:{msg:\''+nm+' accepted?\',label:\'Accepted\',color:\'var(--c4)\',id:\''+l.id+'\',type:\'accepted\'}})">Accepted</button>');
+  p.push('<button class="ab dec" onclick="SS({confirmAction:{msg:\''+nm+' declined?\',label:\'Declined\',color:\'var(--c5)\',id:\''+l.id+'\',type:\'declined\'}})">Declined</button>');
+  p.push('</div>');
+  p.push('</div>');
+  return p.join('');
+}
+
+function render(){
+  var app=document.getElementById("app");if(!app)return;
+  if(!S.userId){var isS=S.authMode==="signup";var err=S.authError?'<div class="ae">'+S.authError+'</div>':"";var ok=S.authSuccess?'<div class="aok">'+S.authSuccess+'</div>':"";app.innerHTML='<div class="aw"><div class="acd"><h1>Lead Tracker</h1><p class="sub">Sign in to sync across devices</p>'+err+ok+'<div class="fg"><label class="fl">Email</label><input class="fi" id="ae" type="email" placeholder="you@email.com"></div><div class="fg"><label class="fl">Password</label><input class="fi" id="ap" type="password" placeholder="Password" onkeydown="if(event.key===\'Enter\'){'+(isS?'doSU()':'doSI()')+'}"></div><button class="bs" style="width:100%;background:var(--c1);margin-bottom:8px" onclick="'+(isS?'doSU()':'doSI()')+'"'+(S.authLoading?' disabled':'')+'>'+(S.authLoading?'...':(isS?'Create Account':'Sign In'))+'</button><div class="adv">or</div><button class="gb" onclick="doGS()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>Google</button><div class="at">'+(isS?'Have an account? <a onclick="SS({authMode:\'signin\',authError:\'\',authSuccess:\'\'})">Sign In</a>':'New? <a onclick="SS({authMode:\'signup\',authError:\'\',authSuccess:\'\'})">Create Account</a>')+'</div></div></div>';return;}
+  if(S.loading){app.innerHTML='<div class="lw"><p>Loading...</p></div>';return;}
+
+  var cfg=S.config,act2=actL(),fu=cFU(),sl=fu[S.selectedDate]||[];
+  var yr=S.currentMonth.year,mo=S.currentMonth.month;
+  var fd=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate(),tod=td(new Date());
+  var tfu=fu[tod]||[];
+  var tBan=tfu.length?'<div class="todban">\ud83d\udcde '+tfu.length+' follow-up'+(tfu.length>1?'s':'')+' today: '+tfu.map(function(l){return l.name;}).join(", ")+'</div>':"";
+  var nBan=S.showNotifRequest?'<div class="nb">\ud83d\udd14 Enable notifications <button onclick="reqN()">Enable</button><button class="nd" onclick="SS({showNotifRequest:false,notifDismissed:true})">\u2715</button></div>':"";
+  var hu=!!S.undoData;
+  var uBar='<div class="ur'+(hu?' hu':'')+'"><span class="ulb">'+(hu?'\u21a9 '+S.undoLabel:'No actions to undo')+'</span><button class="ub '+(hu?'ua':'ui')+'" onclick="'+(hu?'doUndo()':'')+'"'+(hu?'':' disabled')+'>Undo</button></div>';
+
+  var cDays="";for(var i=0;i<fd;i++)cDays+='<div style="min-height:44px"></div>';
+  for(var d=1;d<=dim;d++){var ds=yr+"-"+String(mo+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");var fps=fu[ds]||[],isT=ds===tod,isS2=ds===S.selectedDate;var cl="cd";if(isS2)cl+=" sel";else if(isT)cl+=" tod";else if(fps.length)cl+=" hev";var dots="";if(fps.length){var dH="";for(var j=0;j<Math.min(fps.length,3);j++){var co=fps[j].followUpType==="callback"?"var(--c3)":(SC[fps[j].source]||"var(--c1)");dH+='<div class="cdot" style="background:'+co+'"></div>';}if(fps.length>3)dH+='<span style="font-size:9px;color:var(--tx4)">+'+(fps.length-3)+'</span>';dots='<div class="cdots">'+dH+'</div>';}cDays+='<div class="'+cl+'" onclick="SS({selectedDate:\''+ds+'\'})"><div class="cdn">'+d+'</div>'+dots+'</div>';}
+
+  var selHTML="";
+  if(!sl.length)selHTML='<div class="card ce">No follow-ups scheduled</div>';
+  else{var ca=[];for(var i=0;i<sl.length;i++)ca.push(bCard(sl[i],cfg));selHTML=ca.join('');}
+  var sdl=new Date(S.selectedDate+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+  var ctHTML=S.view==="contacts"?'<input class="sbar" id="css" placeholder="Search contacts..." value="'+ea(S.contactSearch)+'" oninput="uCS()"><div id="csl">'+bCL()+'</div>':"";
+
+  var modals="";
+  /* Add Lead */
+  if(S.showForm)modals+='<div class="mo"><div class="ml"><h2 style="font-size:18px">Add Lead</h2><div class="fg" style="position:relative"><label class="fl">Name *</label><input class="fi" id="f-name" placeholder="John Smith" value="'+ea(S.form.name)+'" oninput="uDD()"><div id="cdd2" class="cdd" style="display:none"></div></div><div class="fg"><label class="fl">Phone *</label><input class="fi" id="f-phone" type="tel" placeholder="(555) 123-4567" value="'+ea(S.form.phone)+'"></div><div class="fg"><label class="fl">Estimate Date</label><input class="fi" id="f-date" type="date" value="'+S.form.estimateDate+'"></div><div class="fg"><label class="fl">Source</label><div style="display:flex;gap:8px"><button class="sb '+(S.form.source==="Facebook"?"afb":"si")+'" onclick="SS({form:Object.assign({},S.form,{source:\'Facebook\'})})">Facebook</button><button class="sb '+(S.form.source==="Google"?"ag":"si")+'" onclick="SS({form:Object.assign({},S.form,{source:\'Google\'})})">Google</button></div></div><div class="fg"><label class="fl">Notes</label><textarea class="fi" id="f-notes" rows="2" placeholder="Any notes...">'+S.form.notes+'</textarea></div><div class="br"><button class="bc" onclick="SS({showForm:false})">Cancel</button><button class="bs" style="background:var(--c1)" onclick="addLead()">Add Lead</button></div></div></div>';
+  /* Add Contact */
+  if(S.showAddContact)modals+='<div class="mo"><div class="ml" style="max-width:380px"><h2 style="font-size:18px">Add Contact</h2><div class="fg"><label class="fl">Name *</label><input class="fi" id="ac-name"></div><div class="fg"><label class="fl">Phone</label><input class="fi" id="ac-phone" type="tel"></div><div class="fg"><label class="fl">Source</label><div style="display:flex;gap:8px"><button class="sb '+(S.contactForm.source==="Facebook"?"afb":"si")+'" onclick="S.contactForm.source=\'Facebook\';render()">Facebook</button><button class="sb '+(S.contactForm.source==="Google"?"ag":"si")+'" onclick="S.contactForm.source=\'Google\';render()">Google</button></div></div><div class="fg"><label class="fl">Notes</label><textarea class="fi" id="ac-notes" rows="2"></textarea></div><div class="br"><button class="bc" onclick="SS({showAddContact:false})">Cancel</button><button class="bs" style="background:var(--c1)" onclick="addCon()">Add</button></div></div></div>';
+
+  /* Settings */
+  if(S.showSettings){
+    var st=S.settingsTab;
+    var tabs='<div class="stb"><button class="'+(st==="followups"?"a":"")+'" onclick="SS({settingsTab:\'followups\'})">Text Messages</button><button class="'+(st==="theme"?"a":"")+'" onclick="SS({settingsTab:\'theme\'})">Theme</button></div>';
+    var body="";
+    if(st==="followups"){
+      var capO="";for(var i=7;i<=90;i++)capO+='<option value="'+i+'"'+(cfg.capDay===i?" selected":"")+'>'+i+'d</option>';
+      /* Status sub-tabs */
+      var fst=S.fuStatusTab;
+      var stabs='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px">';
+      STATUS_KEYS.forEach(function(k){stabs+='<button class="stat-btn'+(fst===k?' active':'')+'" onclick="SS({fuStatusTab:\''+k+'\'})">'+STATUS_LABELS[k]+'</button>';});
+      stabs+='</div>';
+      var fk={no_contact:"followUps",reviewed:"followUpsReviewed",getting_estimates:"followUpsEstimates",talk_to_spouse:"followUpsSpouse"}[fst];
+      var curFU=cfg[fk]||[];
+      var fuH="";for(var i=0;i<curFU.length;i++){var f=curFU[i];var dO="";for(var d=1;d<=cfg.capDay;d++)dO+='<option value="'+d+'"'+(f.day===d?" selected":"")+'>Day '+d+'</option>';fuH+='<div class="fc"><div class="fh"><span class="fn2">#'+(i+1)+'</span>'+(curFU.length>1?'<button class="fr" onclick="remFU('+i+')">\u00d7</button>':'')+'</div><div class="frow"><span style="font-size:12px;color:var(--tx3)">Day</span><select class="fsel" id="fu-d-'+i+'">'+dO+'</select></div><textarea class="fta" id="fu-t-'+i+'" rows="2">'+f.text+'</textarea><div style="font-size:10px;color:var(--tx5);margin-top:4px">Use "name" for first name</div></div>';}
+      body='<div class="cr"><span class="cl2">Cap</span><select class="csel" id="cap-day">'+capO+'</select></div>'
+        +'<div class="sst">\ud83d\udcde Missed Callback</div><div class="fc"><textarea class="fta" id="cb-mt" rows="2">'+cfg.callbackMissedText+'</textarea></div>'
+        +'<div style="margin-top:16px">'+stabs+'</div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="sst" style="margin:0">Sequence ('+curFU.length+')</span><button class="btn bp" style="font-size:12px;padding:6px 12px" onclick="addFU()">+ Add</button></div>'+fuH;
+    } else {
+      var logoH=S.logoBase64?'<div class="lga" onclick="hLogo()"><img src="'+S.logoBase64+'"><p>Click to change</p></div><button style="padding:6px 12px;border-radius:6px;border:1px solid var(--c5);background:transparent;color:var(--c5);cursor:pointer;font-size:12px;margin-bottom:12px" onclick="remLogo()">Remove</button>'
+        :'<div class="lga" onclick="hLogo()"><p style="font-size:28px">\ud83d\uddbc\ufe0f</p><p>Upload logo (max 500KB)</p></div>';
+      var colH='<div class="sst" style="margin-top:16px">\ud83c\udfa8 Colors</div>';
+      var tc=S.themeColors.length>=5?S.themeColors:DEF_COLORS;
+      for(var i=0;i<5;i++)colH+='<div class="crow"><label>'+CL[i]+'</label><input type="color" id="cp-'+i+'" value="'+tc[i]+'" onchange="setCol('+i+')"><div class="sw" style="background:'+tc[i]+'"></div></div>';
+      body='<div class="sst">\ud83d\uddbc\ufe0f Logo</div>'+logoH+colH
+        +'<div class="sst" style="margin-top:16px">\u2600\ufe0f Mode</div>'
+        +'<div class="ttg"><button class="'+(S.themeMode==="dark"?"a":"")+'" onclick="setMd(\'dark\')">\ud83c\udf19 Dark</button><button class="'+(S.themeMode==="light"?"a":"")+'" onclick="setMd(\'light\')">\u2600\ufe0f Light</button></div>';
+    }
+    modals+='<div class="mo"><div class="ml" style="max-width:440px"><h2 style="font-size:18px;margin-bottom:8px">Settings</h2>'+tabs+body
+      +'<div style="display:flex;gap:8px;margin-top:12px">'
+      +(st==="followups"?'<button style="padding:8px 12px;border-radius:8px;border:1px solid var(--c5);background:transparent;color:var(--c5);cursor:pointer;font-size:12px" onclick="rstCfg()">Reset</button>':'<button style="padding:8px 12px;border-radius:8px;border:1px solid var(--c5);background:transparent;color:var(--c5);cursor:pointer;font-size:12px" onclick="rstTheme()">Reset Theme</button>')
+      +'<div style="flex:1"></div><button class="bc" style="flex:0" onclick="SS({showSettings:false})">Cancel</button>'
+      +'<button class="bs" style="background:var(--c1);flex:0;padding:10px 20px" onclick="saveSett()">Save</button></div></div></div>';
+  }
+
+  /* Text Message */
+  if(S.textMessage){var tm=S.textMessage;var sH="sms:"+tm.phone.replace(/\D/g,"")+"?body="+encodeURIComponent(tm.message);modals+='<div class="mo"><div class="ml" style="max-width:400px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="font-size:16px;margin:0">\ud83d\udcf1 '+tm.leadName+'</h3><span class="badge" style="background:var(--c1);color:#fff">'+(tm.isCallback?"CB":"#"+tm.stepNumber)+'</span></div><p style="font-size:12px;color:var(--tx4);margin-bottom:8px">'+fp(tm.phone)+'</p><div class="tp">'+tm.message+'</div><div class="br"><button class="bs" style="background:'+(S.copied?"var(--c4)":"var(--bd2)")+'" onclick="cpTxt(S.textMessage.message)">'+(S.copied?"\u2713":"\ud83d\udccb Copy")+'</button><a href="'+sH+'" class="sl">\ud83d\udcac Send</a></div><button style="width:100%;margin-top:8px;padding:10px;border-radius:8px;border:none;background:transparent;color:var(--tx4);cursor:pointer;font-size:13px" onclick="SS({textMessage:null})">Close</button></div></div>';}
+  /* Callback */
+  if(S.callbackLeadId)modals+='<div class="mo"><div class="ml" style="max-width:340px"><h3 style="font-size:16px">Callback</h3><div class="fg"><label class="fl">Date *</label><input class="fi" id="cb-d" type="date" value="'+S.callbackDate+'"></div><div class="fg"><label class="fl">Time</label><input class="fi" id="cb-t" type="time" value="'+S.callbackTime+'"></div><div class="br"><button class="bc" onclick="SS({callbackLeadId:null,callbackDate:\'\',callbackTime:\'\'})">Cancel</button><button class="bs" style="background:var(--c3)" onclick="S.callbackDate=document.getElementById(\'cb-d\').value;S.callbackTime=document.getElementById(\'cb-t\').value;sCB(S.callbackLeadId)">Set</button></div></div></div>';
+  /* Confirm */
+  if(S.confirmAction){var ca2=S.confirmAction;modals+='<div class="mo"><div class="ml" style="max-width:340px;text-align:center"><p style="font-size:15px;margin-bottom:16px">'+ca2.msg+'</p><div class="br"><button class="bc" onclick="SS({confirmAction:null})">Cancel</button><button class="bs" style="background:'+ca2.color+'" onclick="rAct(\''+ca2.id+'\',\''+ca2.type+'\')">'+ca2.label+'</button></div></div></div>';}
+
+  /* Lead Detail */
+  if(S.editingLead){var el=S.editingLead,dl2=dl(el.estimateDate,cfg.capDay);var lgH="";if(!el.actions.length)lgH='<p style="font-size:13px;color:var(--tx5)">No actions yet</p>';else{for(var i=0;i<el.actions.length;i++){var a=el.actions[i];var co2=a.type==="no_answer"?"var(--c2)":a.type==="callback"?"var(--c3)":a.type==="accepted"?"var(--c4)":"var(--c5)";var tx2=a.type==="no_answer"?"No Answer":a.type==="callback"?"Callback: "+new Date(a.callbackDate+"T12:00:00").toLocaleDateString()+(a.callbackTime?" at "+f12(a.callbackTime):""):a.type==="accepted"?"Accepted \u2713":"Declined \u2717";lgH+='<div class="li"><div class="ld" style="background:'+co2+'"></div><div><div class="lt">'+tx2+'</div><div class="ldt">'+new Date(a.date).toLocaleString()+'</div></div></div>';}}
+    var dt="";
+    if(S.editMode){
+      dt='<div style="margin-bottom:16px"><div class="fg"><label class="fl">Name</label><input class="fi" id="ed-n" value="'+ea(el.name)+'"></div><div class="fg"><label class="fl">Phone</label><input class="fi" id="ed-p" type="tel" value="'+ea(el.phone)+'"></div><div class="fg"><label class="fl">Source</label><div style="display:flex;gap:8px"><button class="sb '+(el.source==="Facebook"?"afb":"si")+'" id="ed-fb" onclick="this.className=\'sb afb\';document.getElementById(\'ed-g\').className=\'sb si\'">Facebook</button><button class="sb '+(el.source==="Google"?"ag":"si")+'" id="ed-g" onclick="this.className=\'sb ag\';document.getElementById(\'ed-fb\').className=\'sb si\'">Google</button></div></div><div class="fg"><label class="fl">Notes</label><textarea class="fi" id="ed-nt" rows="3">'+el.notes+'</textarea></div><div class="br"><button class="bc" style="flex:0;padding:8px 16px" onclick="SS({editMode:false})">Cancel</button><button class="bs" style="background:var(--c4);flex:0;padding:8px 20px" onclick="sEdit()">\u2713 Save</button></div></div>';
+    } else {
+      dt='<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:16px"><div><h3 style="font-size:18px;margin:0;color:var(--tx2)">'+el.name+'</h3><p style="font-size:13px;color:var(--tx3);margin-top:4px">'+fp(el.phone)+'</p></div><div style="display:flex;gap:6px;align-items:center"><button style="padding:5px 10px;border-radius:6px;border:1px solid var(--c1);background:transparent;color:var(--c1);cursor:pointer;font-size:12px;font-weight:600" onclick="SS({editMode:true})">Edit</button><span class="badge" style="background:'+SC[el.source]+'22;color:'+SC[el.source]+'">'+el.source+'</span></div></div>';
+    }
+    /* Status buttons */
+    var statBtns='<div style="margin-bottom:12px"><div class="fl" style="margin-bottom:6px">Lead Status</div><div class="stat-row">';
+    STATUS_KEYS.forEach(function(k){statBtns+='<button class="stat-btn'+((el.contactStatus||"no_contact")===k?' active':'')+'" onclick="setLeadStatus(\''+el.id+'\',\''+k+'\')">'+STATUS_LABELS[k]+'</button>';});
+    statBtns+='</div></div>';
+
+    modals+='<div class="mo" style="z-index:998"><div class="ml" style="max-width:420px">'+dt
+      +(!S.editMode?'<div class="ig"><div class="ib"><div class="il">Estimate Date</div><div class="iv">'+new Date(el.estimateDate+"T12:00:00").toLocaleDateString()+'</div></div><div class="ib"><div class="il">Days Left</div><div class="iv" style="color:'+(dl2<=5?"var(--c5)":"var(--tx)")+'">'+Math.max(0,dl2)+'</div></div></div>'
+      +(el.notes?'<div style="background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:12px;font-size:13px;color:var(--tx3)">'+el.notes+'</div>':"")
+      +statBtns:"")
+      +'<h4 style="font-size:13px;color:var(--tx4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Activity Log</h4><div style="margin-bottom:16px">'+lgH+'</div><div style="display:flex;gap:8px"><button style="padding:10px 16px;border-radius:8px;border:1px solid var(--c5);background:transparent;color:var(--c5);cursor:pointer;font-size:13px" onclick="dLead(\''+el.id+'\')">Delete</button><div style="flex:1"></div><button style="padding:10px 20px;border-radius:8px;border:none;background:var(--bd2);color:var(--tx);cursor:pointer;font-size:13px" onclick="SS({editingLead:null,editMode:false})">Close</button></div></div></div>';
+  }
+
+  /* CSV */
+  if(S.csvImport&&S.csvImport.step==="mapping"){var ci=S.csvImport;var hO="";for(var h=0;h<ci.headers.length;h++)hO+='<option value="'+h+'">'+ea(ci.headers[h])+'</option>';var nmH='<div style="margin-bottom:12px"><div style="display:flex;gap:8px;margin-bottom:8px"><label style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--tx);cursor:pointer"><input type="radio" name="cnm" value="full"'+(ci.nameMode==="full"?' checked':'')+' onchange="csvNM(\'full\')"> Full Name</label><label style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--tx);cursor:pointer"><input type="radio" name="cnm" value="split"'+(ci.nameMode==="split"?' checked':'')+' onchange="csvNM(\'split\')"> First+Last</label></div>';if(ci.nameMode==="full"){var nO=hO.replace('value="'+ci.nameCol+'"','value="'+ci.nameCol+'" selected');nmH+='<div class="cmr"><span class="cml">Name</span><select class="cms" id="cnc" onchange="S.csvImport.nameCol=parseInt(this.value);csvPv()">'+nO+'</select></div>';}else{var fO=hO.replace('value="'+ci.fnameCol+'"','value="'+ci.fnameCol+'" selected');var lO=hO.replace('value="'+ci.lnameCol+'"','value="'+ci.lnameCol+'" selected');nmH+='<div class="cmr"><span class="cml">First</span><select class="cms" id="cfnc" onchange="S.csvImport.fnameCol=parseInt(this.value);csvPv()">'+fO+'</select></div><div class="cmr"><span class="cml">Last</span><select class="cms" id="clnc" onchange="S.csvImport.lnameCol=parseInt(this.value);csvPv()">'+lO+'</select></div>';}nmH+='</div>';var pO='<option value="-1">(None)</option>'+hO;if(ci.phoneCol>=0)pO=pO.replace('value="'+ci.phoneCol+'"','value="'+ci.phoneCol+'" selected');var pvH="";var sh=ci.rows.slice(0,3);for(var i=0;i<sh.length;i++)pvH+="<tr><td>"+ea(csvNm(sh[i],ci))+"</td><td>"+(csvPh(sh[i],ci)?fp(csvPh(sh[i],ci)):"")+"</td></tr>";modals+='<div class="mo"><div class="ml" style="max-width:460px"><h2 style="font-size:18px">Import</h2>'+nmH+'<div class="cmr"><span class="cml">Phone</span><select class="cms" id="cpc" onchange="S.csvImport.phoneCol=parseInt(this.value);csvPv()">'+pO+'</select></div><div class="cprev"><table><thead><tr><th>Name</th><th>Phone</th></tr></thead><tbody id="cpv">'+pvH+'</tbody></table></div><div class="copt'+(ci.mode==="replace"?" sel":"")+'"><input type="radio" name="cmod" value="replace"'+(ci.mode==="replace"?" checked":"")+'><label>Replace all</label></div><div class="copt'+(ci.mode==="add"?" sel":"")+'"><input type="radio" name="cmod" value="add"'+(ci.mode==="add"?" checked":"")+'><label>Add to existing</label></div><div style="font-size:11px;color:var(--tx4);margin:4px 0 12px">'+ci.rows.length+' contacts</div><div class="br"><button class="bc" onclick="SS({csvImport:null})">Cancel</button><button class="bs" style="background:var(--c1)" onclick="csvProc()">Import</button></div></div></div>';}
+  if(S.csvImport&&S.csvImport.step==="duplicates"){var ci2=S.csvImport;var dpC="";for(var i=0;i<ci2.duplicates.length;i++){var dp=ci2.duplicates[i],isSk=dp.action==="skip";dpC+='<div class="dpc"><div style="font-size:13px;color:var(--tx)">'+ea(dp.csv.name)+' \u2014 '+fp(dp.csv.phone)+'</div><div style="font-size:12px;color:var(--c2);margin-top:4px">Match: '+ea(dp.existing.name)+'</div><div style="display:flex;gap:6px;margin-top:8px"><button style="padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;border:1px solid '+(isSk?'var(--c2)':'var(--bd2)')+';color:'+(isSk?'var(--c2)':'var(--tx4)')+';background:transparent" onclick="csvDA('+i+',\'skip\')">Skip</button><button style="padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;border:1px solid '+(!isSk?'var(--c1)':'var(--bd2)')+';color:'+(!isSk?'var(--c1)':'var(--tx4)')+';background:transparent" onclick="csvDA('+i+',\'import\')">Import</button></div></div>';}modals+='<div class="mo"><div class="ml" style="max-width:460px"><h2 style="font-size:18px">'+ci2.duplicates.length+' Duplicate'+(ci2.duplicates.length>1?'s':'')+'</h2><div class="bbtn"><button class="bb" onclick="csvBk(\'skip\')">Skip All</button><button class="bb" onclick="csvBk(\'import\')">Import All</button></div>'+dpC+'<div class="br"><button class="bc" onclick="SS({csvImport:null})">Cancel</button><button class="bs" style="background:var(--c1)" onclick="csvFin()">Confirm</button></div></div></div>';}
+
+  var tabB='<div class="tb"><button class="tbn'+(S.view==="calendar"?" a":"")+'" onclick="SS({view:\'calendar\'})">\ud83d\udcc5 Calendar</button><button class="tbn'+(S.view==="contacts"?" a":"")+'" onclick="SS({view:\'contacts\',contactSearch:\'\'})">\ud83d\udccb Contacts</button></div>';
+  var logoC=S.logoBase64?'<div class="hc"><img src="'+S.logoBase64+'" class="hlogo"></div>':"";
+
+  var pg='<div class="hw"><div class="hl"><h1>Lead Tracker</h1><span>'+act2.length+' active \u00b7 <button class="sob" onclick="doSO()">Sign Out</button></span></div>'+logoC+'<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><button class="btn bo" onclick="csvF()" style="padding:6px 10px;font-size:12px">\ud83d\udcc2</button><button class="btn bo" onclick="SS({showSettings:true,settingsTab:\'followups\',fuStatusTab:\'no_contact\'})" style="padding:6px 10px;font-size:12px">\u2699\ufe0f</button><button class="btn bp" onclick="SS({showForm:true})" style="padding:6px 10px;font-size:12px">+ Lead</button><button class="btn bo" onclick="SS({showAddContact:true})" style="padding:6px 10px;font-size:12px">+ Contact</button></div></div>';
+  pg+=nBan+tBan+uBar;
+  pg+='<div class="legend"><div class="legend-item"><div class="legend-dot" style="background:var(--c1)"></div>Facebook</div><div class="legend-item"><div class="legend-dot" style="background:var(--c5)"></div>Google</div><div class="legend-item"><div class="legend-dot" style="background:var(--c3)"></div>Callback</div></div>';
+  pg+=tabB;
+  if(S.view==="calendar"){
+    var pyr=mo===0?yr-1:yr,pmo=mo===0?11:mo-1;
+    var nyr=mo===11?yr+1:yr,nmo=mo===11?0:mo+1;
+    pg+='<div class="content"><div class="cn"><button onclick="SS({currentMonth:{year:'+pyr+',month:'+pmo+'}})">\u2039</button><h2>'+MO[mo]+' '+yr+'</h2><button onclick="SS({currentMonth:{year:'+nyr+',month:'+nmo+'}})">\u203a</button></div>';
+    pg+='<div class="cg"><div class="ch">Sun</div><div class="ch">Mon</div><div class="ch">Tue</div><div class="ch">Wed</div><div class="ch">Thu</div><div class="ch">Fri</div><div class="ch">Sat</div>'+cDays+'</div>';
+    pg+='<h3 class="st">'+sdl+(sl.length?' <span class="ss">\u2014 '+sl.length+'</span>':"")+'</h3>';
+    pg+=selHTML+'</div>';
+  } else {
+    pg+='<div class="content">'+ctHTML+'</div>';
+  }
+  pg+=modals;
+  app.innerHTML=pg;
+}
+
+async function init(){
+  if(!sb){document.getElementById("app").innerHTML='<div class="lw"><p style="color:var(--c5)">Connection error</p></div>';return;}
+  render();
+  var{data:{session}}=await sb.auth.getSession();
+  if(session){S.userId=session.user.id;S.userEmail=session.user.email;await loadAll();}
+  else{S.loading=false;render();}
+  sb.auth.onAuthStateChange(async function(ev,ses){
+    if(ev==="SIGNED_IN"&&ses&&S.userId!==ses.user.id){S.userId=ses.user.id;S.userEmail=ses.user.email;await loadAll();}
+    else if(ev==="SIGNED_OUT"){Object.assign(S,{userId:null,userEmail:null,leads:[],contacts:[],config:JSON.parse(JSON.stringify(DEF_CFG)),logoBase64:"",themeMode:"dark",themeColors:DEF_COLORS.slice(),loading:false});apT();render();}
+  });
+}
+init();
+</script>
+</body>
+</html>
